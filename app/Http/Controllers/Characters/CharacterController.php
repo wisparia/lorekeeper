@@ -12,6 +12,7 @@ use App\Models\User\User;
 use App\Models\Character\Character;
 use App\Models\Species\Species;
 use App\Models\Rarity;
+use App\Models\WorldExpansion\Location;
 use App\Models\Feature\Feature;
 use App\Models\Currency\Currency;
 use App\Models\Currency\CurrencyLog;
@@ -96,6 +97,9 @@ class CharacterController extends Controller
 
         return view('character.edit_profile', [
             'character' => $this->character,
+            'locations' => Location::all()->where('is_character_home')->pluck('style','id')->toArray(),
+            'user_enabled' => Settings::get('WE_user_locations'),
+            'char_enabled' => Settings::get('WE_character_locations')
         ]);
     }
     
@@ -115,7 +119,7 @@ class CharacterController extends Controller
         $isOwner = ($this->character->user_id == Auth::user()->id);
         if(!$isMod && !$isOwner) abort(404);
         
-        if($service->updateCharacterProfile($request->only(['name', 'text', 'is_gift_art_allowed', 'is_trading', 'alert_user']), $this->character, Auth::user(), !$isOwner)) {
+        if($service->updateCharacterProfile($request->only(['name', 'text', 'is_gift_art_allowed', 'is_trading', 'alert_user','location']), $this->character, Auth::user(), !$isOwner)) {
             flash('Profile edited successfully.')->success();
         }
         else {

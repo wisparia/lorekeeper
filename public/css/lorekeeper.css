@@ -584,3 +584,8 @@ tr.outflow {
 .bookmark-table .img-thumbnail {
     width: 100px;
 }
+
+
+@media (min-width: 768px) {
+    .fb-md-50 { flex-basis:50%; }
+}

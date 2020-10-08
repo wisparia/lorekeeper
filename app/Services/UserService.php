@@ -3,11 +3,13 @@
 use App\Services\Service;
 
 use DB;
+use Settings;
 use Carbon\Carbon;
 
 use App\Models\User\User;
 use App\Models\Rank\Rank;
 use App\Models\Character\CharacterTransfer;
+use App\Models\WorldExpansion\Location;
 use App\Models\Character\CharacterDesignUpdate;
 use App\Models\Submission\Submission;
 use App\Models\User\UserUpdateLog;
@@ -68,6 +70,36 @@ class UserService extends Service
         if($user) $user->update($data);
 
         return $user;
+    }
+
+    /**
+     * Updates a user. Used in modifying the admin user on the command line.
+     *
+     * @param  array  $data
+     * @return \App\Models\User\User
+     */
+    public function updateLocation($id, $user)
+    {
+        DB::beginTransaction();
+
+        try {
+            $location = Location::find($id);
+            if(!$location) throw new \Exception("Not a valid location.");
+            if(!$location->is_user_home) throw new \Exception("Not a location a user can have as their home.");
+
+            $limit = Settings::get('WE_change_timelimit');
+
+            if($user->canChangeLocation) {
+                $user->home_id = $id;
+                $user->save();
+            }
+            else throw new \Exception("You can't change your location yet!");
+
+            return $this->commitReturn(true);
+        } catch(\Exception $e) { 
+            $this->setError('error', $e->getMessage());
+        }
+        return $this->rollbackReturn(false);
     }
 
     /**

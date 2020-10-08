@@ -29,6 +29,13 @@
         <div class="col-md-2 col-4"><h5>Joined</h5></div>
         <div class="col-md-10 col-8">{!! format_date($user->created_at, false) !!} ({{ $user->created_at->diffForHumans() }})</div>
     </div>
+    
+    @if($user_enabled && isset($user->home_id))
+    <div class="row">
+        <div class="col-md-2 col-4"><h5>Home</h5></div>
+        <div class="col-md-10 col-8">{!! $user->home ? $user->home->fullDisplayName : '-Deleted Location-' !!}</div>
+    </div>
+    @endif
 </div>
 
 <div class="card mb-3">
