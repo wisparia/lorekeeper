@@ -90,7 +90,8 @@ class LocationService extends Service
 
             $image = null;            
             if(isset($data['image']) && $data['image']) {
-                $old = $type->image_extension;
+                if(isset($type->image_extension)) $old = $type->imageFileName;
+                else $old = null;
                 $image = $data['image'];
                 unset($data['image']);
             }
@@ -102,7 +103,8 @@ class LocationService extends Service
 
             $image_th = null;            
             if(isset($data['image_th']) && $data['image_th']) {
-                $old_th = $type->thumb_extension;
+                if(isset($type->thumb_extension)) $old_th = $type->thumbFileName;
+                else $old_th = null;
                 $image_th = $data['image_th'];
                 unset($data['image_th']);
             }
@@ -294,7 +296,8 @@ class LocationService extends Service
 
             $image = null;            
             if(isset($data['image']) && $data['image']) {
-                $old = $location->image_extension;
+                if(isset($location->image_extension)) $old = $location->imageFileName;
+                else $old = null;
                 $image = $data['image'];
                 unset($data['image']);
             }
@@ -306,7 +309,8 @@ class LocationService extends Service
 
             $image_th = null;            
             if(isset($data['image_th']) && $data['image_th']) {
-                $old_th = $location->thumb_extension;
+                if(isset($location->thumb_extension)) $old_th = $location->thumbFileName;
+                else $old_th = null;
                 $image_th = $data['image_th'];
                 unset($data['image_th']);
             }

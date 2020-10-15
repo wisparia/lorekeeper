@@ -102,7 +102,8 @@ class NatureService extends Service
 
             $image = null;            
             if(isset($data['image']) && $data['image']) {
-                $old = $category->image_extension;
+                if(isset($category->image_extension)) $old = $category->imageFileName;
+                else $old = null;
                 $image = $data['image'];
                 unset($data['image']);
             }
@@ -114,7 +115,8 @@ class NatureService extends Service
 
             $image_th = null;            
             if(isset($data['image_th']) && $data['image_th']) {
-                $old_th = $category->thumb_extension;
+                if(isset($category->thumb_extension)) $old_th = $category->thumbFileName;
+                else $old_th = null;
                 $image_th = $data['image_th'];
                 unset($data['image_th']);
             }
@@ -346,7 +348,8 @@ class NatureService extends Service
 
             $image = null;            
             if(isset($data['image']) && $data['image']) {
-                $old = $fauna->image_extension;
+                if(isset($fauna->image_extension)) $old = $fauna->imageFileName;
+                else $old = null;
                 $image = $data['image'];
                 unset($data['image']);
             }
@@ -358,7 +361,8 @@ class NatureService extends Service
 
             $image_th = null;            
             if(isset($data['image_th']) && $data['image_th']) {
-                $old_th = $fauna->thumb_extension;
+                if(isset($fauna->thumb_extension)) $old_th = $fauna->thumbFileName;
+                else $old_th = null;
                 $image_th = $data['image_th'];
                 unset($data['image_th']);
             }
@@ -540,7 +544,8 @@ class NatureService extends Service
 
             $image = null;            
             if(isset($data['image']) && $data['image']) {
-                $old = $category->image_extension;
+                if(isset($category->image_extension)) $old = $category->imageFileName;
+                else $old = null;
                 $image = $data['image'];
                 unset($data['image']);
             }
@@ -552,7 +557,8 @@ class NatureService extends Service
 
             $image_th = null;            
             if(isset($data['image_th']) && $data['image_th']) {
-                $old_th = $category->thumb_extension;
+                if(isset($category->thumb_extension)) $old_th = $category->thumbFileName;
+                else $old_th = null;
                 $image_th = $data['image_th'];
                 unset($data['image_th']);
             }
@@ -784,7 +790,8 @@ class NatureService extends Service
 
             $image = null;            
             if(isset($data['image']) && $data['image']) {
-                $old = $flora->image_extension;
+                if(isset($flora->image_extension)) $old = $flora->imageFileName;
+                else $old = null;
                 $image = $data['image'];
                 unset($data['image']);
             }
@@ -796,7 +803,8 @@ class NatureService extends Service
 
             $image_th = null;            
             if(isset($data['image_th']) && $data['image_th']) {
-                $old_th = $flora->thumb_extension;
+                if(isset($flora->thumb_extension)) $old_th = $flora->thumbFileName;
+                else $old_th = null;
                 $image_th = $data['image_th'];
                 unset($data['image_th']);
             }

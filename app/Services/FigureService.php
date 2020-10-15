@@ -98,7 +98,8 @@ class FigureService extends Service
 
             $image = null;            
             if(isset($data['image']) && $data['image']) {
-                $old = $category->image_extension;
+                if(isset($category->image_extension)) $old = $category->imageFileName;
+                else $old = null;
                 $image = $data['image'];
                 unset($data['image']);
             }
@@ -110,7 +111,8 @@ class FigureService extends Service
 
             $image_th = null;            
             if(isset($data['image_th']) && $data['image_th']) {
-                $old_th = $category->thumb_extension;
+                if(isset($category->thumb_extension)) $old_th = $category->thumbFileName;
+                else $old_th = null;
                 $image_th = $data['image_th'];
                 unset($data['image_th']);
             }
@@ -323,7 +325,8 @@ class FigureService extends Service
 
             $image = null;            
             if(isset($data['image']) && $data['image']) {
-                $old = $figure->image_extension;
+                if(isset($figure->image_extension)) $old = $figure->imageFileName;
+                else $old = null;
                 $image = $data['image'];
                 unset($data['image']);
             }
@@ -335,7 +338,8 @@ class FigureService extends Service
 
             $image_th = null;            
             if(isset($data['image_th']) && $data['image_th']) {
-                $old_th = $figure->thumb_extension;
+                if(isset($figure->thumb_extension)) $old_th = $figure->thumbFileName;
+                else $old_th = null;
                 $image_th = $data['image_th'];
                 unset($data['image_th']);
             }

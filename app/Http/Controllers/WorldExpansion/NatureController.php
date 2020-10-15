@@ -17,7 +17,7 @@ use App\Models\WorldExpansion\FaunaItem;
 use App\Models\WorldExpansion\FaunaCategory;
 use App\Models\WorldExpansion\FaunaLocation;
 
-use App\Models\WorldExpansion\LocatioNType;
+use App\Models\WorldExpansion\LocationType;
 
 use App\Models\Item\ItemCategory;
 
