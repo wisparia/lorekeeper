@@ -991,7 +991,7 @@ class CharacterManager extends Service
             $character->save();
 
             // Update the character's location
-            if($data['location']) $character->home_id = $data['location'];
+            if(isset($data['location']) && $data['location']) $character->home_id = $data['location'];
             $character->save();
 
             $character->profile->text = $data['text'];
