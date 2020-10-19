@@ -9,7 +9,11 @@
 
 <p class="mb-0">Fauna are the animals of your world. </p>
 
-<div class="text-right mb-3"><a class="btn btn-primary" href="{{ url('admin/world/faunas/create') }}"><i class="fas fa-plus mr-2"></i> Create New Fauna</a></div>
+<div class="text-right mb-3">
+    <a class="btn btn-primary" href="{{ url('admin/world/fauna-categories') }}"><i class="fas fa-folder mr-2"></i> Fauna Categories</a>
+    <a class="btn btn-primary" href="{{ url('admin/world/faunas/create') }}"><i class="fas fa-plus mr-2"></i> Create New Fauna</a>
+</div> 
+
 @if(!count($faunas))
     <p>No fauna found.</p>
 @else 

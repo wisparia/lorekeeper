@@ -79,40 +79,20 @@ return [
         'power' => 'manage_world',
         'links' => [
             [
-                'name' => 'Location Types',
-                'url' => 'admin/world/location-types'
-            ],
-            [
                 'name' => 'Locations',
                 'url' => 'admin/world/locations'
-            ],
-            [
-                'name' => 'Fauna Categories',
-                'url' => 'admin/world/fauna-categories'
             ],
             [
                 'name' => 'Fauna',
                 'url' => 'admin/world/faunas'
             ],
             [
-                'name' => 'Flora Categories',
-                'url' => 'admin/world/flora-categories'
-            ],
-            [
                 'name' => 'Flora',
                 'url' => 'admin/world/floras'
             ],
             [
-                'name' => 'Event Categories',
-                'url' => 'admin/world/event-categories'
-            ],
-            [
                 'name' => ' Events',
                 'url' => 'admin/world/events'
-            ],
-            [
-                'name' => 'Figure Categories',
-                'url' => 'admin/world/figure-categories'
             ],
             [
                 'name' => ' Figures',

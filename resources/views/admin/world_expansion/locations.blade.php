@@ -10,7 +10,10 @@
 <p class="mb-0">Locations are specific areas of your world. <strong>eg. Canada, Europe, Las Vegas.</strong></p>
 <p>The sorting order reflects the order in which the locations will be listed on the location index.</p>
 
-<div class="text-right mb-3"><a class="btn btn-primary" href="{{ url('admin/world/locations/create') }}"><i class="fas fa-plus"></i> Create New Location</a></div>
+<div class="text-right mb-3">
+    <a class="btn btn-primary" href="{{ url('admin/world/location-types') }}"><i class="fas fa-folder mr-2"></i> Location Types</a>
+    <a class="btn btn-primary" href="{{ url('admin/world/locations/create') }}"><i class="fas fa-plus mr-2"></i> Create New Location</a>
+</div> 
 @if(!count($locations))
     <p>No locations found.</p>
 @else 

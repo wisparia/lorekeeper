@@ -7,7 +7,10 @@
 
 <h1>Events</h1>
 
-<div class="text-right mb-3"><a class="btn btn-primary" href="{{ url('admin/world/events/create') }}"><i class="fas fa-plus mr-2"></i> Create New Event</a></div>
+<div class="text-right mb-3">
+    <a class="btn btn-primary" href="{{ url('admin/world/event-categories') }}"><i class="fas fa-folder mr-2"></i> Event Categories</a>
+    <a class="btn btn-primary" href="{{ url('admin/world/events/create') }}"><i class="fas fa-plus mr-2"></i> Create New Event</a>
+</div>   
 @if(!count($events))
     <p>No events found.</p>
 @else 
