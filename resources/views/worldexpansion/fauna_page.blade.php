@@ -4,7 +4,7 @@
 
 @section('content')
 {!! breadcrumbs(['World' => 'world', 'Fauna' => 'world/faunas', $fauna->name => 'world/faunas/'.$fauna->id]) !!}
-<h1 ><img src="{{$fauna->thumbUrl}}" style="max-height:25px;vertical-align:inherit;"/>{!! $fauna->displayName !!}</h1>
+<h1 ><img src="{{$fauna->thumbUrl}}" style="max-height:25px;vertical-align:inherit;"/>{!! $fauna->displayName !!}@isset($fauna->scientific_name)<span class="ml-2" style="opacity:0.5; font-size:0.7em;font-style:italic">{!! $fauna->scientific_name !!}</span>@endisset</h1>
 <h5>{!! $fauna->category ? ucfirst($fauna->category->displayName) : 'Miscellaneous' !!}</h5>
 
 @if($fauna->image_extension)
@@ -14,6 +14,13 @@
 @isset($fauna->summary)
 <div class="world-entry-text px-3 text-center">{!! $fauna->summary !!}</div>
 @endisset
+
+@isset($fauna->parsed_description)
+<div class="world-entry-text px-3">
+    {!! $fauna->parsed_description !!}
+</div>
+@endisset
+
     
 
 <div class="row mx-0 px-0 mt-3">
@@ -73,13 +80,6 @@
     </div></div>
     @endif
 </div>
-
-@isset($fauna->parsed_description)
-<div class="world-entry-text px-3">
-    {!! $fauna->parsed_description !!}
-</div>
-@endisset
-
 
 
 @endsection

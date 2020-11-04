@@ -6,12 +6,12 @@ use DB;
 
 use Illuminate\Database\Eloquent\Model;
 
+use App\Models\News;
 use App\Models\User\User;
-use App\Models\WorldExpansion\Figure;
 use App\Models\WorldExpansion\Event;
 use App\Models\Item\Item;
 
-class EventFigure extends Model
+class EventNews extends Model
 {
 
     /**
@@ -20,7 +20,7 @@ class EventFigure extends Model
      * @var array
      */
     protected $fillable = [
-        'figure_id', 'event_id'
+        'news_id', 'event_id'
     ];
 
 
@@ -29,7 +29,7 @@ class EventFigure extends Model
      *
      * @var string
      */
-    protected $table = 'event_figures';
+    protected $table = 'event_newses';
     
     public $timestamps = false;
 
@@ -42,16 +42,16 @@ class EventFigure extends Model
     **********************************************************************************************/
 
     /**
-     * Get the figure attached to this.
+     * Get the news attached to this.
      */
-    public function figure() 
+    public function news() 
     {
-        return $this->belongsTo('App\Models\WorldExpansion\Figure', 'figure_id');
+        return $this->belongsTo('App\Models\News', 'news_id');
     }
     /**
-     * Get the item attached to this.
+     * Get the event attached to this.
      */
-    public function item() 
+    public function event() 
     {
         return $this->belongsTo('App\Models\WorldExpansion\Event', 'event_id');
     }

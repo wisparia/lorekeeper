@@ -22,9 +22,14 @@
         {!! Form::text('name', $fauna->name, ['class' => 'form-control']) !!}
     </div>
     <div class="form-group col-md px-0 pr-md-1">
-        {!! Form::label('Category') !!} {!! add_help('What category of fauna is this?') !!}
-        {!! Form::select('category_id', [0=>'Choose a Fauna Category'] + $categories, $fauna->category_id, ['class' => 'form-control selectize', 'id' => 'category']) !!}
+        {!! Form::label('Scientific Name (Optional)') !!}
+        {!! Form::text('scientific_name', $fauna->scientific_name, ['class' => 'form-control']) !!}
     </div>
+</div>
+
+<div class="form-group">
+    {!! Form::label('Category') !!} {!! add_help('What category of fauna is this?') !!}
+    {!! Form::select('category_id', [0=>'Choose a Fauna Category'] + $categories, $fauna->category_id, ['class' => 'form-control selectize', 'id' => 'category']) !!}
 </div>
 
 <div class="form-group">

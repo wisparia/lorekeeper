@@ -214,7 +214,7 @@ class FaunaController extends Controller
         $id ? $request->validate(Fauna::$updateRules) : $request->validate(Fauna::$createRules);
 
         $data = $request->only([
-            'name', 'description', 'image', 'image_th', 'remove_image', 'remove_image_th', 'is_active', 'summary', 'category_id', 'item_id', 'location_id'
+            'name', 'description', 'image', 'image_th', 'remove_image', 'remove_image_th', 'is_active', 'summary', 'category_id', 'item_id', 'location_id', 'scientific_name'
         ]);
         
         if($id && $service->updateFauna(Fauna::find($id), $data, Auth::user())) {

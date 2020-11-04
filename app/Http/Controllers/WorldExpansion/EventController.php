@@ -12,6 +12,8 @@ use App\Models\WorldExpansion\LocationType;
 use App\Models\WorldExpansion\Figure;
 use App\Models\WorldExpansion\FigureCategory;
 use App\Models\Item\Item;
+use App\Models\Prompt\Prompt;
+use App\Models\Prompt\PromptCategory;
 
 use App\Models\WorldExpansion\Event;
 use App\Models\WorldExpansion\EventFigure;
@@ -122,6 +124,7 @@ class EventController extends Controller
             'figure_categories'  => FigureCategory::where('is_active',1)->get(),
             'location_types'  => LocationType::where('is_active',1)->get(),
             'event_categories'  => EventCategory::where('is_active',1)->get(),
+            'prompt_categories'  => PromptCategory::get(),
         ]);
     }
     

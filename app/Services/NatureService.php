@@ -419,6 +419,8 @@ class NatureService extends Service
         $saveData['summary'] = isset($data['summary']) ? $data['summary'] : null;
 
         if(isset($data['name']) && $data['name']) $saveData['name'] = parse($data['name']);
+        if(isset($data['scientific_name']) && $data['scientific_name']) $saveData['scientific_name'] = parse($data['scientific_name']);
+
         $saveData['is_active'] = isset($data['is_active']);
         $saveData['category_id'] = isset($data['category_id']) && $data['category_id'] ? $data['category_id'] : null;
 
@@ -860,7 +862,9 @@ class NatureService extends Service
         if(isset($data['description']) && $data['description']) $saveData['parsed_description'] = parse($data['description']);
         $saveData['summary'] = isset($data['summary']) ? $data['summary'] : null;
 
+        if(isset($data['scientific_name']) && $data['scientific_name']) $saveData['scientific_name'] = parse($data['scientific_name']);
         if(isset($data['name']) && $data['name']) $saveData['name'] = parse($data['name']);
+        
         $saveData['is_active'] = isset($data['is_active']);
         $saveData['category_id'] = isset($data['category_id']) && $data['category_id'] ? $data['category_id'] : null;
 

@@ -8,12 +8,16 @@ use Settings;
 use Auth;
 use Notifications;
 
+use App\Models\News;
 use App\Models\Item\Item;
+use App\Models\Prompt\Prompt;
 
 use App\Models\WorldExpansion\Event;
 use App\Models\WorldExpansion\EventCategory;
 use App\Models\WorldExpansion\EventFigure;
 use App\Models\WorldExpansion\EventLocation;
+use App\Models\WorldExpansion\EventNews;
+use App\Models\WorldExpansion\EventPrompt;
 
 use App\Models\WorldExpansion\Figure;
 use App\Models\WorldExpansion\FigureItem;
@@ -303,7 +307,8 @@ class EventService extends Service
 
             $event->timestamps = false;
 
-            // Determine if there are items added.
+            /***************************************************** EVENT FIGURES ***************************************************************/
+            // Determine if there are figures added.
             if(isset($data['figure_id'])) {
                 $data['figure_id'] = array_unique($data['figure_id']);
                 $figures = Figure::whereIn('id', $data['figure_id'])->get();
@@ -311,10 +316,10 @@ class EventService extends Service
             }
             else $figures = [];
 
-            // Remove all items from the event so they can be reattached with new data
+            // Remove all figures from the event so they can be reattached with new data
             EventFigure::where('event_id',$event->id)->delete();
 
-            // Attach any items to the event
+            // Attach any figures to the event
             foreach($figures as $key=>$figure) {
                 EventFigure::create([
                     'figure_id' => $figure->id,
@@ -322,6 +327,7 @@ class EventService extends Service
                 ]);
             }
 
+            /***************************************************** EVENT LOCATIONS ***************************************************************/
             // Determine if there are locations added.
             if(isset($data['location_id'])) {
                 $data['location_id'] = array_unique($data['location_id']);
@@ -341,10 +347,53 @@ class EventService extends Service
                 ]);
             }
 
+
+            /***************************************************** EVENT NEWS ***************************************************************/
+            // Determine if there are newses added.
+            if(isset($data['news_id'])) {
+                $data['news_id'] = array_unique($data['news_id']);
+                $newses = News::whereIn('id', $data['news_id'])->get();
+                if(count($newses) != count($data['news_id'])) throw new \Exception("One or more of the selected newses does not exist.");
+            }
+            else $newses = [];
+
+            // Remove all newses from the event so they can be reattached with new data
+            EventNews::where('event_id',$event->id)->delete();
+
+            // Attach any newses to the event
+            foreach($newses as $key=>$news) {
+                EventNews::create([
+                    'news_id' => $news->id,
+                    'event_id' => $event->id,
+                ]);
+            }
+
+
+            /***************************************************** EVENT PROMPTS ***************************************************************/
+            // Determine if there are prompts added.
+            if(isset($data['prompt_id'])) {
+                $data['prompt_id'] = array_unique($data['prompt_id']);
+                $prompts = Prompt::whereIn('id', $data['prompt_id'])->get();
+                if(count($prompts) != count($data['prompt_id'])) throw new \Exception("One or more of the selected prompts does not exist.");
+            }
+            else $prompts = [];
+
+            // Remove all prompts from the event so they can be reattached with new data
+            EventPrompt::where('event_id',$event->id)->delete();
+
+            // Attach any prompts to the event
+            foreach($prompts as $key=>$prompt) {
+                EventPrompt::create([
+                    'prompt_id' => $prompt->id,
+                    'event_id' => $event->id,
+                ]);
+            }
+
             $event->timestamps = true;
 
             $data = $this->populateEventData($data, $event);
 
+            // Image processing
             $image = null;            
             if(isset($data['image']) && $data['image']) {
                 if(isset($event->image_extension)) $old = $event->imageFileName;
@@ -358,6 +407,7 @@ class EventService extends Service
                 $this->handleImage($image, $event->imagePath, $event->imageFileName, $old);
             }
 
+            // Image Thumbnail Processing
             $image_th = null;            
             if(isset($data['image_th']) && $data['image_th']) {
                 if(isset($event->thumb_extension)) $old_th = $event->thumbFileName;

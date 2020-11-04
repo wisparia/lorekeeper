@@ -20,6 +20,11 @@
 <div class="world-entry-text px-3 text-center">{!! $figure->summary !!}</div>
 @endisset
     
+@isset($figure->parsed_description)
+<div class="world-entry-text px-3">
+    {!! $figure->parsed_description !!}
+</div>
+@endisset
 
 <div class="row mx-0 px-0 mt-3">
     @if(count($figure->items))
@@ -74,11 +79,6 @@
     @endif
 </div>
 
-@isset($figure->parsed_description)
-<div class="world-entry-text px-3">
-    {!! $figure->parsed_description !!}
-</div>
-@endisset
 
 
 

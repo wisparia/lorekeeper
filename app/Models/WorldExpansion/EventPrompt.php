@@ -7,11 +7,11 @@ use DB;
 use Illuminate\Database\Eloquent\Model;
 
 use App\Models\User\User;
-use App\Models\WorldExpansion\Figure;
+use App\Models\Prompt\Prompt;
 use App\Models\WorldExpansion\Event;
 use App\Models\Item\Item;
 
-class EventFigure extends Model
+class EventPrompt extends Model
 {
 
     /**
@@ -20,7 +20,7 @@ class EventFigure extends Model
      * @var array
      */
     protected $fillable = [
-        'figure_id', 'event_id'
+        'prompt_id', 'event_id'
     ];
 
 
@@ -29,7 +29,7 @@ class EventFigure extends Model
      *
      * @var string
      */
-    protected $table = 'event_figures';
+    protected $table = 'event_prompts';
     
     public $timestamps = false;
 
@@ -42,11 +42,11 @@ class EventFigure extends Model
     **********************************************************************************************/
 
     /**
-     * Get the figure attached to this.
+     * Get the prompt attached to this.
      */
-    public function figure() 
+    public function prompt() 
     {
-        return $this->belongsTo('App\Models\WorldExpansion\Figure', 'figure_id');
+        return $this->belongsTo('App\Models\Prompt\Prompt', 'prompt_id');
     }
     /**
      * Get the item attached to this.

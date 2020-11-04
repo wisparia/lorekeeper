@@ -25,6 +25,12 @@
 <div class="world-entry-text px-3 text-center">{!! $location->summary !!}</div>
 @endisset
 
+@isset($location->parsed_description)
+<div class="world-entry-text px-3">
+    {!! $location->parsed_description !!}
+</div>
+@endisset
+
 <div class="row mx-0 px-0 mt-3">
     @if(count($location->children))
     <div class="text-center col-md mb-3 fb-md-50"><div class="card h-100 py-3">
@@ -138,12 +144,6 @@
 
     
 </div>
-
-@isset($location->parsed_description)
-<div class="world-entry-text px-3">
-    {!! $location->parsed_description !!}
-</div>
-@endisset
 
 
 

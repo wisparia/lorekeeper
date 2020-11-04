@@ -214,7 +214,7 @@ class FloraController extends Controller
         $id ? $request->validate(Flora::$updateRules) : $request->validate(Flora::$createRules);
 
         $data = $request->only([
-            'name', 'description', 'image', 'image_th', 'remove_image', 'remove_image_th', 'is_active', 'summary', 'category_id', 'item_id', 'location_id'
+            'name', 'description', 'image', 'image_th', 'remove_image', 'remove_image_th', 'is_active', 'summary', 'category_id', 'item_id', 'location_id', 'scientific_name'
         ]);
         
         if($id && $service->updateFlora(Flora::find($id), $data, Auth::user())) {

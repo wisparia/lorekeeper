@@ -12,6 +12,9 @@ use App\Models\User\User;
 use App\Models\WorldExpansion\EventCategory;
 use App\Models\WorldExpansion\Location;
 use App\Models\Item\Item;
+use App\Models\Prompt\Prompt;
+use App\Models\News;
+
 
 class Event extends Model
 {
@@ -95,6 +98,22 @@ class Event extends Model
     public function locations() 
     {
         return $this->belongsToMany('App\Models\WorldExpansion\Location', 'event_locations')->withPivot('id');
+    }
+
+    /**
+     * Get the newses attached to this event.
+     */
+    public function newses() 
+    {
+        return $this->belongsToMany('App\Models\News', 'event_newses')->withPivot('id');
+    }
+
+    /**
+     * Get the prompts attached to this event.
+     */
+    public function prompts() 
+    {
+        return $this->belongsToMany('App\Models\Prompt\Prompt', 'event_prompts')->withPivot('id');
     }
 
     /**********************************************************************************************

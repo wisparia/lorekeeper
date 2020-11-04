@@ -4,7 +4,7 @@
 
 @section('content')
 {!! breadcrumbs(['World' => 'world', 'Flora' => 'world/floras', $flora->name => 'world/floras/'.$flora->id]) !!}
-<h1 ><img src="{{$flora->thumbUrl}}" style="max-height:25px;vertical-align:inherit;"/>{!! $flora->displayName !!}</h1>
+<h1 ><img src="{{$flora->thumbUrl}}" style="max-height:25px;vertical-align:inherit;"/>{!! $flora->displayName !!}@isset($flora->scientific_name)<span class="ml-2" style="opacity:0.5; font-size:0.7em;font-style:italic">{!! $flora->scientific_name !!}</span>@endisset</h1>
 <h5>{!! $flora->category ? ucfirst($flora->category->displayName) : 'Miscellaneous' !!}</h5>
 
 @if($flora->image_extension)
@@ -15,6 +15,13 @@
 <div class="world-entry-text px-3 text-center">{!! $flora->summary !!}</div>
 @endisset
     
+
+@isset($flora->parsed_description)
+<div class="world-entry-text px-3">
+    {!! $flora->parsed_description !!}
+</div>
+@endisset
+
 
 <div class="row mx-0 px-0 mt-3">
     @if(count($flora->locations))
@@ -73,13 +80,6 @@
     </div></div>
     @endif
 </div>
-
-@isset($flora->parsed_description)
-<div class="world-entry-text px-3">
-    {!! $flora->parsed_description !!}
-</div>
-@endisset
-
 
 
 @endsection
