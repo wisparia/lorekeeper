@@ -15,4 +15,12 @@
     {!! $page->parsed_text !!}
 </div>
 
+@if($page->can_comment)
+    <div class="container">
+        @comments(['model' => $page,
+                'perPage' => 5
+            ])
+    </div>
+@endif
+
 @endsection

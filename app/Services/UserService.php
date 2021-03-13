@@ -4,6 +4,9 @@ use App\Services\Service;
 
 use DB;
 use Settings;
+use Auth;
+use File;
+use Image;
 use Carbon\Carbon;
 
 use App\Models\User\User;
@@ -12,10 +15,13 @@ use App\Models\Character\CharacterTransfer;
 use App\Models\WorldExpansion\Location;
 use App\Models\Character\CharacterDesignUpdate;
 use App\Models\Submission\Submission;
+use App\Models\Gallery\GallerySubmission;
 use App\Models\User\UserUpdateLog;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 use App\Services\SubmissionManager;
+use App\Services\GalleryManager;
 use App\Services\CharacterManager;
 use App\Models\Trade;
 
@@ -96,14 +102,14 @@ class UserService extends Service
             else throw new \Exception("You can't change your location yet!");
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
     }
 
     /**
-     * Updates the user's password. 
+     * Updates the user's password.
      *
      * @param  array                  $data
      * @param  \App\Models\User\User  $user
@@ -122,14 +128,14 @@ class UserService extends Service
             $user->save();
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
     }
 
     /**
-     * Updates the user's email and resends a verification email. 
+     * Updates the user's email and resends a verification email.
      *
      * @param  array                  $data
      * @param  \App\Models\User\User  $user
@@ -147,7 +153,55 @@ class UserService extends Service
     }
 
     /**
-     * Bans a user. 
+     * Updates the user's avatar.
+     *
+     * @param  array                  $data
+     * @param  \App\Models\User\User  $user
+     * @return bool
+     */
+    public function updateAvatar($avatar, $user)
+    {
+        DB::beginTransaction();
+
+        try {
+            if(!$avatar) throw new \Exception ("Please upload a file.");
+            $filename = $user->id . '.' . $avatar->getClientOriginalExtension();
+
+            if ($user->avatar !== 'default.jpg') {
+                $file = 'images/avatars/' . $user->avatar;
+                //$destinationPath = 'uploads/' . $id . '/';
+
+                if (File::exists($file)) {
+                    if(!unlink($file)) throw new \Exception("Failed to unlink old avatar.");
+                }
+            }
+
+            // Checks if uploaded file is a GIF
+            if ($avatar->getClientOriginalExtension() == 'gif') {
+
+                if(!copy($avatar, $file)) throw new \Exception("Failed to copy file.");
+                if(!$file->move( public_path('images/avatars', $filename))) throw new \Exception("Failed to move file.");
+                if(!$avatar->move( public_path('images/avatars', $filename))) throw new \Exception("Failed to move file.");
+
+            }
+
+            else {
+                if(!Image::make($avatar)->resize(150, 150)->save( public_path('images/avatars/' . $filename)))
+                throw new \Exception("Failed to process avatar.");
+            }
+
+            $user->avatar = $filename;
+            $user->save();
+
+            return $this->commitReturn($avatar);
+        } catch(\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Bans a user.
      *
      * @param  array                  $data
      * @param  \App\Models\User\User  $user
@@ -176,14 +230,25 @@ class UserService extends Service
                 foreach($submissions as $submission)
                     $submissionManager->rejectSubmission(['submission' => $submission, 'staff_comments' => 'User has been banned from site activity.']);
 
-                // 3. Design approvals
+                // 3. Gallery Submissions
+                $galleryManager = new GalleryManager;
+                $gallerySubmissions = GallerySubmission::where('user_id', $user->id)->where('status', 'Pending')->get();
+                foreach($gallerySubmissions as $submission) {
+                    $galleryManager->rejectSubmission($submission);
+                    $galleryManager->postStaffComments($submission->id, ['staff_comments' => 'User has been banned from site activity.'], $staff);
+                }
+                $gallerySubmissions = GallerySubmission::where('user_id', $user->id)->where('status', 'Accepted')->get();
+                foreach($gallerySubmissions as $submission)
+                    $submission->update(['is_visible' => 0]);
+
+                // 4. Design approvals
                 $requests = CharacterDesignUpdate::where('user_id', $user->id)->where(function($query) {
                     $query->where('status', 'Pending')->orWhere('status', 'Draft');
                 })->get();
                 foreach($requests as $request)
                     $characterManager->rejectRequest(['staff_comments' => 'User has been banned from site activity.'], $request, $staff, true);
 
-                // 4. Trades
+                // 5. Trades
                 $tradeManager = new TradeManager;
                 $trades = Trade::where(function($query) {
                     $query->where('status', 'Open')->orWhere('status', 'Pending');
@@ -209,14 +274,14 @@ class UserService extends Service
             $user->settings->save();
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
     }
 
     /**
-     * Unbans a user. 
+     * Unbans a user.
      *
      * @param  \App\Models\User\User  $user
      * @param  \App\Models\User\User  $staff
@@ -230,7 +295,7 @@ class UserService extends Service
             if($user->is_banned) {
                 $user->is_banned = 0;
                 $user->save();
-                
+
                 $user->settings->ban_reason = null;
                 $user->settings->banned_at = null;
                 $user->settings->save();
@@ -238,7 +303,7 @@ class UserService extends Service
             }
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);

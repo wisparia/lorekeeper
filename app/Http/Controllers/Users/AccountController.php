@@ -4,8 +4,13 @@ namespace App\Http\Controllers\Users;
 
 use Auth;
 use Settings;
+use File;
+use Image;
+
+use App\Models\User\User;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Notification;
 use App\Models\WorldExpansion\Location;
 
@@ -33,7 +38,7 @@ class AccountController extends Controller
     {
         if(Auth::user()->is_banned)
             return view('account.banned');
-        else 
+        else
             return redirect()->to('/');
     }
 
@@ -52,7 +57,7 @@ class AccountController extends Controller
             4 => 'weekly',
             5 => 'daily'
         );
-        
+
         return view('account.settings',[
             'locations' => Location::all()->where('is_user_home')->pluck('style','id')->toArray(),
             'user_enabled' => Settings::get('WE_user_locations'),
@@ -60,7 +65,7 @@ class AccountController extends Controller
             'location_interval' => $interval[Settings::get('WE_change_timelimit')]
         ]);
     }
-    
+
     /**
      * Edits the user's profile.
      *
@@ -76,7 +81,24 @@ class AccountController extends Controller
         flash('Profile updated successfully.')->success();
         return redirect()->back();
     }
-    
+
+    /**
+     * Edits the user's avatar.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postAvatar(Request $request, UserService $service)
+    {
+        if($service->updateAvatar($request->file('avatar'), Auth::user())) {
+            flash('Avatar updated successfully.')->success();
+        }
+        else {
+            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
+        }
+        return redirect()->back();
+    }
+
     /**
      * Edits the user's location from a list of locations that users can make their home.
      *
@@ -93,7 +115,7 @@ class AccountController extends Controller
         }
         return redirect()->back();
     }
-    
+
     /**
      * Changes the user's password.
      *
@@ -115,7 +137,7 @@ class AccountController extends Controller
         }
         return redirect()->back();
     }
-    
+
     /**
      * Changes the user's email address and sends a verification email.
      *
@@ -153,7 +175,7 @@ class AccountController extends Controller
             'notifications' => $notifications
         ]);
     }
-    
+
     /**
      * Deletes a notification and returns a response.
      *
@@ -171,9 +193,10 @@ class AccountController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postClearNotifications()
+    public function postClearNotifications($type = null)
     {
-        Auth::user()->notifications()->delete();
+        if(isset($type) && $type) Auth::user()->notifications()->where('notification_type_id', $type)->delete();
+        else Auth::user()->notifications()->delete();
         flash('Notifications cleared successfully.')->success();
         return redirect()->back();
     }
