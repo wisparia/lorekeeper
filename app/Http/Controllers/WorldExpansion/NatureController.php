@@ -28,7 +28,7 @@ class NatureController extends Controller
     | Nature Controller
     |--------------------------------------------------------------------------
     |
-    | This controller shows locations and their categories, as well as the 
+    | This controller shows locations and their categories, as well as the
     | main World Info page created in the World Expansion extension.
     |
     */
@@ -44,12 +44,12 @@ class NatureController extends Controller
         $query = FaunaCategory::query();
         $name = $request->get('name');
         if($name) $query->where('name', 'LIKE', '%'.$name.'%');
-        return view('worldexpansion.fauna_categories', [  
+        return view('worldexpansion.fauna_categories', [
             'categories' => $query->orderBy('sort', 'DESC')->paginate(20)->appends($request->query())
 
         ]);
     }
-    
+
     /**
      * Shows the locations page.
      *
@@ -65,7 +65,7 @@ class NatureController extends Controller
             'category' => $category
         ]);
     }
-    
+
     /**
      * Shows the locations page.
      *
@@ -76,12 +76,12 @@ class NatureController extends Controller
     {
         $query = Fauna::with('category');
         $data = $request->only(['category_id', 'name', 'sort']);
-        if(isset($data['category_id']) && $data['category_id'] != 'none') 
+        if(isset($data['category_id']) && $data['category_id'] != 'none')
             $query->where('category_id', $data['category_id']);
-        if(isset($data['name'])) 
+        if(isset($data['name']))
             $query->where('name', 'LIKE', '%'.$data['name'].'%');
 
-        if(isset($data['sort'])) 
+        if(isset($data['sort']))
         {
             switch($data['sort']) {
                 case 'alpha':
@@ -100,7 +100,7 @@ class NatureController extends Controller
                     $query->sortOldest();
                     break;
             }
-        } 
+        }
         else $query->sortCategory();
 
         return view('worldexpansion.faunas', [
@@ -108,7 +108,7 @@ class NatureController extends Controller
             'categories' => ['none' => 'Any Category'] + FaunaCategory::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
         ]);
     }
-    
+
     /**
      * Shows the locations page.
      *
@@ -131,13 +131,6 @@ class NatureController extends Controller
 
 
 
-
-
-
-
-
-    
-
     /**
      * Shows the floras page.
      *
@@ -149,12 +142,12 @@ class NatureController extends Controller
         $query = FloraCategory::query();
         $name = $request->get('name');
         if($name) $query->where('name', 'LIKE', '%'.$name.'%');
-        return view('worldexpansion.flora_categories', [  
+        return view('worldexpansion.flora_categories', [
             'categories' => $query->orderBy('sort', 'DESC')->paginate(20)->appends($request->query())
 
         ]);
     }
-    
+
     /**
      * Shows the locations page.
      *
@@ -170,7 +163,7 @@ class NatureController extends Controller
             'category' => $category
         ]);
     }
-    
+
     /**
      * Shows the locations page.
      *
@@ -181,12 +174,12 @@ class NatureController extends Controller
     {
         $query = Flora::with('category');
         $data = $request->only(['category_id', 'name', 'sort']);
-        if(isset($data['category_id']) && $data['category_id'] != 'none') 
+        if(isset($data['category_id']) && $data['category_id'] != 'none')
             $query->where('category_id', $data['category_id']);
-        if(isset($data['name'])) 
+        if(isset($data['name']))
             $query->where('name', 'LIKE', '%'.$data['name'].'%');
 
-        if(isset($data['sort'])) 
+        if(isset($data['sort']))
         {
             switch($data['sort']) {
                 case 'alpha':
@@ -205,7 +198,7 @@ class NatureController extends Controller
                     $query->sortOldest();
                     break;
             }
-        } 
+        }
         else $query->sortCategory();
 
         return view('worldexpansion.floras', [
@@ -213,7 +206,7 @@ class NatureController extends Controller
             'categories' => ['none' => 'Any Category'] + FloraCategory::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray()
         ]);
     }
-    
+
     /**
      * Shows the locations page.
      *
@@ -233,7 +226,7 @@ class NatureController extends Controller
             'location_types'     => LocationType::where('is_active',1)->get(),
         ]);
     }
-    
-    
+
+
 
 }

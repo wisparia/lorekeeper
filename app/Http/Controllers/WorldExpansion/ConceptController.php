@@ -7,45 +7,38 @@ use App\Http\Controllers\Controller;
 
 use Settings;
 
-use App\Models\WorldExpansion\Location;
-use App\Models\WorldExpansion\LocationType;
-use App\Models\WorldExpansion\Faction;
-use App\Models\WorldExpansion\FactionType;
-use App\Models\WorldExpansion\Figure;
-use App\Models\WorldExpansion\FigureCategory;
-use App\Models\Item\Item;
-use App\Models\Prompt\Prompt;
-use App\Models\Prompt\PromptCategory;
+use App\Models\WorldExpansion\Concept;
+use App\Models\WorldExpansion\ConceptItem;
+use App\Models\WorldExpansion\ConceptCategory;
+use App\Models\WorldExpansion\ConceptLocation;
 
-use App\Models\WorldExpansion\Event;
-use App\Models\WorldExpansion\EventFigure;
-use App\Models\WorldExpansion\EventCategory;
+use App\Models\WorldExpansion\FloraCategory;
+use App\Models\WorldExpansion\LocationType;
 use App\Models\Item\ItemCategory;
 
-class EventController extends Controller
+class ConceptController extends Controller
 {
     /*
     |--------------------------------------------------------------------------
-    | Event Controller
+    | Concept Controller
     |--------------------------------------------------------------------------
     |
-    | This controller shows locations and their categories, as well as the
-    | main World Info page created in the World Expansion extension.
+    | This controller shows concepts and their categories.
     |
     */
 
     /**
-     * Shows the events page.
+     * Shows the concepts page.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getEventCategories(Request $request)
+    public function getConceptCategories(Request $request)
     {
-        $query = EventCategory::query();
+        $query = ConceptCategory::query();
         $name = $request->get('name');
         if($name) $query->where('name', 'LIKE', '%'.$name.'%');
-        return view('worldexpansion.event_categories', [
+        return view('worldexpansion.concept_categories', [
             'categories' => $query->orderBy('sort', 'DESC')->paginate(20)->appends($request->query())
 
         ]);
@@ -57,12 +50,12 @@ class EventController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getEventCategory($id)
+    public function getConceptCategory($id)
     {
-        $category = EventCategory::where('is_active',1)->find($id);
+        $category = ConceptCategory::where('is_active',1)->find($id);
         if(!$category) abort(404);
 
-        return view('worldexpansion.event_category_page', [
+        return view('worldexpansion.concept_category_page', [
             'category' => $category
         ]);
     }
@@ -73,9 +66,9 @@ class EventController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getEvents(Request $request)
+    public function getConcepts(Request $request)
     {
-        $query = Event::with('category');
+        $query = Concept::with('category');
         $data = $request->only(['category_id', 'name', 'sort']);
         if(isset($data['category_id']) && $data['category_id'] != 'none')
             $query->where('category_id', $data['category_id']);
@@ -104,9 +97,9 @@ class EventController extends Controller
         }
         else $query->sortCategory();
 
-        return view('worldexpansion.events', [
-            'events' => $query->paginate(20)->appends($request->query()),
-            'categories' => ['none' => 'Any Category'] + EventCategory::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray()
+        return view('worldexpansion.concepts', [
+            'concepts' => $query->paginate(20)->appends($request->query()),
+            'categories' => ['none' => 'Any Category'] + ConceptCategory::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
         ]);
     }
 
@@ -116,21 +109,18 @@ class EventController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getEvent($id)
+    public function getConcept($id)
     {
-        $event = Event::where('is_active',1)->find($id);
-        if(!$event) abort(404);
+        $concept = Concept::where('is_active',1)->find($id);
+        if(!$concept) abort(404);
 
-        return view('worldexpansion.event_page', [
-            'event' => $event,
-            'figure_categories'  => FigureCategory::where('is_active',1)->get(),
-            'location_types'  => LocationType::where('is_active',1)->get(),
-            'faction_types'  => FactionType::where('is_active',1)->get(),
-            'event_categories'  => EventCategory::where('is_active',1)->get(),
-            'prompt_categories'  => PromptCategory::get(),
+        return view('worldexpansion.concept_page', [
+            'concept' => $concept,
+            'concept_categories'  => ConceptCategory::where('is_active',1)->get(),
+            'flora_categories'  => FloraCategory::where('is_active',1)->get(),
+            'item_categories'   => ItemCategory::get(),
+            'location_types'     => LocationType::where('is_active',1)->get(),
         ]);
     }
-
-
 
 }

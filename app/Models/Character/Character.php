@@ -44,7 +44,7 @@ class Character extends Model
         'is_sellable', 'is_tradeable', 'is_giftable',
         'sale_value', 'transferrable_at', 'is_visible',
         'is_gift_art_allowed', 'is_gift_writing_allowed', 'is_trading', 'sort',
-        'is_myo_slot', 'name', 'trade_id', 'owner_url', 'home_id', 'home_changed'
+        'is_myo_slot', 'name', 'trade_id', 'owner_url', 'home_id', 'home_changed', 'faction_id', 'faction_changed'
     ];
 
     /**
@@ -66,7 +66,7 @@ class Character extends Model
      *
      * @var array
      */
-    protected $dates = ['transferrable_at','home_changed'];
+    protected $dates = ['transferrable_at','home_changed', 'faction_changed'];
 
     /**
      * Accessors to append to the model.
@@ -191,6 +191,14 @@ class Character extends Model
     public function home()
     {
         return $this->belongsTo('App\Models\WorldExpansion\Location', 'home_id');
+    }
+
+    /**
+     * Get the faction this character is attached to.
+     */
+    public function faction()
+    {
+        return $this->belongsTo('App\Models\WorldExpansion\Faction', 'faction_id');
     }
 
     /**
@@ -391,6 +399,34 @@ class Character extends Model
             case 3:
                 if(!$this->home) return null;
                 else return $this->home->fullDisplayName;
+
+            default:
+                return null;
+        }
+    }
+
+    public function getFactionSettingAttribute()
+    {
+        return intval(Settings::get('WE_character_factions'));
+    }
+
+    public function getCurrentFactionAttribute()
+    {
+        $setting = $this->factionSetting;
+
+        switch($setting) {
+            case 1:
+                if(!$this->user) return null;
+                elseif(!$this->user->faction) return null;
+                else return $this->user->faction->fullDisplayName;
+
+            case 2:
+                if(!$this->faction) return null;
+                else return $this->faction->fullDisplayName;
+
+            case 3:
+                if(!$this->faction) return null;
+                else return $this->faction->fullDisplayName;
 
             default:
                 return null;

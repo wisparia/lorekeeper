@@ -167,6 +167,14 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Get the user's rank data.
+     */
+    public function faction()
+    {
+        return $this->belongsTo('App\Models\WorldExpansion\Faction', 'faction_id');
+    }
+
+    /**
      * Get the user's items.
      */
     public function items()
@@ -345,7 +353,7 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Gets the user's log type for log creation.
+     * Checks if the user can change location.
      *
      * @return string
      */
@@ -384,6 +392,53 @@ class User extends Authenticatable implements MustVerifyEmail
                 if(now()->year != $this->home_changed->year) return true;
                 if(now()->month != $this->home_changed->month) return true;
                 if(now()->day != $this->home_changed->day) return true;
+                else return false;
+
+            default:
+                return true;
+        }
+    }
+
+    /**
+     * Checks if the user can change faction.
+     *
+     * @return string
+     */
+    public function getCanChangeFactionAttribute()
+    {
+        if(!isset($this->faction_changed)) return true;
+        $limit = Settings::get('WE_change_timelimit');
+        switch($limit){
+            case 0:
+                return true;
+            case 1:
+                // Yearly
+                if(now()->year == $this->faction_changed->year) return false;
+                else return true;
+
+            case 2:
+                // Quarterly
+                if(now()->year != $this->faction_changed->year) return true;
+                if(now()->quarter != $this->faction_changed->quarter) return true;
+                else return false;
+
+            case 3:
+                // Monthly
+                if(now()->year != $this->faction_changed->year) return true;
+                if(now()->month != $this->faction_changed->month) return true;
+                else return false;
+
+            case 4:
+                // Weekly
+                if(now()->year != $this->faction_changed->year) return true;
+                if(now()->week != $this->faction_changed->week) return true;
+                else return false;
+
+            case 5:
+                // Daily
+                if(now()->year != $this->faction_changed->year) return true;
+                if(now()->month != $this->faction_changed->month) return true;
+                if(now()->day != $this->faction_changed->day) return true;
                 else return false;
 
             default:

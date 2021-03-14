@@ -16,6 +16,7 @@ use App\Models\WorldExpansion\Event;
 use App\Models\WorldExpansion\EventCategory;
 use App\Models\WorldExpansion\EventFigure;
 use App\Models\WorldExpansion\EventLocation;
+use App\Models\WorldExpansion\EventFaction;
 use App\Models\WorldExpansion\EventNews;
 use App\Models\WorldExpansion\EventPrompt;
 
@@ -25,6 +26,8 @@ use App\Models\WorldExpansion\FigureCategory;
 
 use App\Models\WorldExpansion\LocationType;
 use App\Models\WorldExpansion\Location;
+use App\Models\WorldExpansion\FactionType;
+use App\Models\WorldExpansion\Faction;
 
 class EventService extends Service
 {
@@ -41,7 +44,7 @@ class EventService extends Service
     /**
      * Creates a new event category.
      *
-     * @param  array                  $data 
+     * @param  array                  $data
      * @param  \App\Models\User\User  $user
      * @return bool|\App\Models\Event\Category
      */
@@ -79,17 +82,17 @@ class EventService extends Service
             }
 
             return $this->commitReturn($category);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
     }
-    
+
     /**
      * Updates a category.
      *
      * @param  \App\Models\Category\Category  $category
-     * @param  array                  $data 
+     * @param  array                  $data
      * @param  \App\Models\User\User  $user
      * @return bool|\App\Models\Category\Category
      */
@@ -103,7 +106,7 @@ class EventService extends Service
 
             $data = $this->populateEventCategoryData($data, $category);
 
-            $image = null;            
+            $image = null;
             if(isset($data['image']) && $data['image']) {
                 if(isset($category->image_extension)) $old = $category->imageFileName;
                 else $old = null;
@@ -116,7 +119,7 @@ class EventService extends Service
                 $this->handleImage($image, $category->imagePath, $category->imageFileName, $old);
             }
 
-            $image_th = null;            
+            $image_th = null;
             if(isset($data['image_th']) && $data['image_th']) {
                 if(isset($category->thumb_extension)) $old_th = $category->thumbFileName;
                 else $old_th = null;
@@ -132,14 +135,14 @@ class EventService extends Service
             $category->update($data);
 
             return $this->commitReturn($category);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
     }
 
 
-    
+
     /**
      * Deletes a category.
      *
@@ -152,18 +155,18 @@ class EventService extends Service
 
         try {
             if(isset($category->image_extension)) $this->deleteImage($category->imagePath, $category->imageFileName);
-            if(isset($category->thumb_extension)) $this->deleteImage($category->imagePath, $category->thumbFileName); 
+            if(isset($category->thumb_extension)) $this->deleteImage($category->imagePath, $category->thumbFileName);
 
             if(count($category->events)){
                 foreach($category->events as $event){
                     if(isset($event->image_extension)) $this->deleteImage($event->imagePath, $event->imageFileName);
-                    if(isset($event->thumb_extension)) $this->deleteImage($event->imagePath, $event->thumbFileName); 
+                    if(isset($event->thumb_extension)) $this->deleteImage($event->imagePath, $event->thumbFileName);
                 }
             }
 
             $category->delete();
             return $this->commitReturn(true);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
@@ -188,7 +191,7 @@ class EventService extends Service
             }
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
@@ -197,7 +200,7 @@ class EventService extends Service
     /**
      * Processes user input for creating/updating a category.
      *
-     * @param  array                  $data 
+     * @param  array                  $data
      * @param  \App\Models\Category\Category  $category
      * @return array
      */
@@ -209,25 +212,25 @@ class EventService extends Service
 
         if(isset($data['remove_image']))
         {
-            if($category && isset($category->image_extension) && $data['remove_image']) 
-            { 
-                $data['image_extension'] = null; 
-                $this->deleteImage($category->imagePath, $category->imageFileName); 
+            if($category && isset($category->image_extension) && $data['remove_image'])
+            {
+                $data['image_extension'] = null;
+                $this->deleteImage($category->imagePath, $category->imageFileName);
             }
             unset($data['remove_image']);
         }
-        
+
         if(isset($data['remove_image_th']) && $data['remove_image_th'])
         {
-            if($category && isset($category->thumb_extension) && $data['remove_image_th']) 
-            { 
-                $data['thumb_extension'] = null; 
-                $this->deleteImage($category->imagePath, $category->thumbFileName); 
+            if($category && isset($category->thumb_extension) && $data['remove_image_th'])
+            {
+                $data['thumb_extension'] = null;
+                $this->deleteImage($category->imagePath, $category->thumbFileName);
             }
             unset($data['remove_image_th']);
         }
-        
-        
+
+
         return $data;
     }
 
@@ -245,7 +248,7 @@ class EventService extends Service
     /**
      * Creates a new event.
      *
-     * @param  array                  $data 
+     * @param  array                  $data
      * @param  \App\Models\User\User  $user
      * @return bool|\App\Models\Event\Category
      */
@@ -282,17 +285,17 @@ class EventService extends Service
             }
 
             return $this->commitReturn($event);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
     }
-    
+
     /**
      * Updates a event.
      *
      * @param  \App\Models\WorldExpansion\Event  $event
-     * @param  array                  $data 
+     * @param  array                  $data
      * @param  \App\Models\User\User  $user
      * @return bool|\App\Models\WorldExpansion\Event
      */
@@ -347,6 +350,25 @@ class EventService extends Service
                 ]);
             }
 
+            /***************************************************** EVENT FACTIONS ***************************************************************/
+            // Determine if there are factions added.
+            if(isset($data['faction_id'])) {
+                $data['faction_id'] = array_unique($data['faction_id']);
+                $factions = Faction::whereIn('id', $data['faction_id'])->get();
+                if(count($factions) != count($data['faction_id'])) throw new \Exception("One or more of the selected factions does not exist.");
+            }
+            else $factions = [];
+
+            // Remove all factions from the event so they can be reattached with new data
+            EventLocation::where('event_id',$event->id)->delete();
+
+            // Attach any factions to the event
+            foreach($factions as $key=>$faction) {
+                EventFaction::create([
+                    'faction_id' => $faction->id,
+                    'event_id' => $event->id,
+                ]);
+            }
 
             /***************************************************** EVENT NEWS ***************************************************************/
             // Determine if there are newses added.
@@ -394,7 +416,7 @@ class EventService extends Service
             $data = $this->populateEventData($data, $event);
 
             // Image processing
-            $image = null;            
+            $image = null;
             if(isset($data['image']) && $data['image']) {
                 if(isset($event->image_extension)) $old = $event->imageFileName;
                 else $old = null;
@@ -408,7 +430,7 @@ class EventService extends Service
             }
 
             // Image Thumbnail Processing
-            $image_th = null;            
+            $image_th = null;
             if(isset($data['image_th']) && $data['image_th']) {
                 if(isset($event->thumb_extension)) $old_th = $event->thumbFileName;
                 else $old_th = null;
@@ -425,13 +447,13 @@ class EventService extends Service
             $event->update($data);
 
             return $this->commitReturn($event);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
     }
 
-    
+
     /**
      * Deletes a event.
      *
@@ -444,10 +466,10 @@ class EventService extends Service
 
         try {
             if(isset($event->image_extension)) $this->deleteImage($event->imagePath, $event->imageFileName);
-            if(isset($event->thumb_extension)) $this->deleteImage($event->imagePath, $event->thumbFileName); 
+            if(isset($event->thumb_extension)) $this->deleteImage($event->imagePath, $event->thumbFileName);
             $event->delete();
             return $this->commitReturn(true);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
@@ -456,7 +478,7 @@ class EventService extends Service
     /**
      * Processes user input for creating/updating a event.
      *
-     * @param  array                  $data 
+     * @param  array                  $data
      * @param  \App\Models\WorldExpansion\Event  $event
      * @return array
      */
@@ -473,27 +495,27 @@ class EventService extends Service
 
         $saveData['image'] = isset($data['image']) ? $data['image'] : null;
         $saveData['image_th'] = isset($data['image_th']) ? $data['image_th'] : null;
-        
+
         $saveData['occur_start'] = isset($data['occur_start']) ? $data['occur_start'] : null;
         $saveData['occur_end'] = isset($data['occur_end']) ? $data['occur_end'] : null;
 
-    
+
         if(isset($data['remove_image']))
         {
-            if($event && isset($event->image_extension) && $data['remove_image']) 
-            { 
-                $saveData['image_extension'] = null; 
-                $this->deleteImage($event->imagePath, $event->imageFileName); 
+            if($event && isset($event->image_extension) && $data['remove_image'])
+            {
+                $saveData['image_extension'] = null;
+                $this->deleteImage($event->imagePath, $event->imageFileName);
             }
             unset($data['remove_image']);
         }
-        
+
         if(isset($data['remove_image_th']) && $data['remove_image_th'])
         {
-            if($event && isset($event->thumb_extension) && $data['remove_image_th']) 
-            { 
-                $saveData['thumb_extension'] = null; 
-                $this->deleteImage($event->imagePath, $event->thumbFileName); 
+            if($event && isset($event->thumb_extension) && $data['remove_image_th'])
+            {
+                $saveData['thumb_extension'] = null;
+                $this->deleteImage($event->imagePath, $event->thumbFileName);
             }
             unset($data['remove_image_th']);
         }
@@ -521,19 +543,19 @@ class EventService extends Service
             }
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
     }
 
-    
+
 
 
     /**
      * Creates a new figure category.
      *
-     * @param  array                  $data 
+     * @param  array                  $data
      * @param  \App\Models\User\User  $user
      * @return bool|\App\Models\Figure\Category
      */
@@ -571,17 +593,17 @@ class EventService extends Service
             }
 
             return $this->commitReturn($category);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
     }
-    
+
     /**
      * Updates a category.
      *
      * @param  \App\Models\Category\Category  $category
-     * @param  array                  $data 
+     * @param  array                  $data
      * @param  \App\Models\User\User  $user
      * @return bool|\App\Models\Category\Category
      */
@@ -595,7 +617,7 @@ class EventService extends Service
 
             $data = $this->populateFigureCategoryData($data, $category);
 
-            $image = null;            
+            $image = null;
             if(isset($data['image']) && $data['image']) {
                 if(isset($category->image_extension)) $old = $category->imageFileName;
                 else $old = null;
@@ -608,7 +630,7 @@ class EventService extends Service
                 $this->handleImage($image, $category->imagePath, $category->imageFileName, $old);
             }
 
-            $image_th = null;            
+            $image_th = null;
             if(isset($data['image_th']) && $data['image_th']) {
                 if(isset($category->thumb_extension)) $old_th = $category->thumbFileName;
                 else $old_th = null;
@@ -624,14 +646,14 @@ class EventService extends Service
             $category->update($data);
 
             return $this->commitReturn($category);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
     }
 
 
-    
+
     /**
      * Deletes a category.
      *
@@ -644,16 +666,16 @@ class EventService extends Service
 
         try {
             if(isset($category->image_extension)) $this->deleteImage($category->imagePath, $category->imageFileName);
-            if(isset($category->thumb_extension)) $this->deleteImage($category->imagePath, $category->thumbFileName); 
+            if(isset($category->thumb_extension)) $this->deleteImage($category->imagePath, $category->thumbFileName);
             if(count($category->figures)){
                 foreach($category->figures as $figure){
                     if(isset($figure->image_extension)) $this->deleteImage($figure->imagePath, $figure->imageFileName);
-                    if(isset($figure->thumb_extension)) $this->deleteImage($figure->imagePath, $figure->thumbFileName); 
+                    if(isset($figure->thumb_extension)) $this->deleteImage($figure->imagePath, $figure->thumbFileName);
                 }
             }
             $category->delete();
             return $this->commitReturn(true);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
@@ -678,7 +700,7 @@ class EventService extends Service
             }
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
@@ -687,7 +709,7 @@ class EventService extends Service
     /**
      * Processes user input for creating/updating a category.
      *
-     * @param  array                  $data 
+     * @param  array                  $data
      * @param  \App\Models\Category\Category  $category
      * @return array
      */
@@ -699,25 +721,25 @@ class EventService extends Service
 
         if(isset($data['remove_image']))
         {
-            if($category && isset($category->image_extension) && $data['remove_image']) 
-            { 
-                $data['image_extension'] = null; 
-                $this->deleteImage($category->imagePath, $category->imageFileName); 
+            if($category && isset($category->image_extension) && $data['remove_image'])
+            {
+                $data['image_extension'] = null;
+                $this->deleteImage($category->imagePath, $category->imageFileName);
             }
             unset($data['remove_image']);
         }
-        
+
         if(isset($data['remove_image_th']) && $data['remove_image_th'])
         {
-            if($category && isset($category->thumb_extension) && $data['remove_image_th']) 
-            { 
-                $data['thumb_extension'] = null; 
-                $this->deleteImage($category->imagePath, $category->thumbFileName); 
+            if($category && isset($category->thumb_extension) && $data['remove_image_th'])
+            {
+                $data['thumb_extension'] = null;
+                $this->deleteImage($category->imagePath, $category->thumbFileName);
             }
             unset($data['remove_image_th']);
         }
-        
-        
+
+
         return $data;
     }
 
@@ -735,7 +757,7 @@ class EventService extends Service
     /**
      * Creates a new figure.
      *
-     * @param  array                  $data 
+     * @param  array                  $data
      * @param  \App\Models\User\User  $user
      * @return bool|\App\Models\Figure\Category
      */
@@ -773,17 +795,17 @@ class EventService extends Service
             }
 
             return $this->commitReturn($figure);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
     }
-    
+
     /**
      * Updates a figure.
      *
      * @param  \App\Models\WorldExpansion\Figure  $figure
-     * @param  array                  $data 
+     * @param  array                  $data
      * @param  \App\Models\User\User  $user
      * @return bool|\App\Models\WorldExpansion\Figure
      */
@@ -821,7 +843,7 @@ class EventService extends Service
 
             $data = $this->populateFigureData($data, $figure);
 
-            $image = null;            
+            $image = null;
             if(isset($data['image']) && $data['image']) {
                 if(isset($figure->image_extension)) $old = $figure->imageFileName;
                 else $old = null;
@@ -834,7 +856,7 @@ class EventService extends Service
                 $this->handleImage($image, $figure->imagePath, $figure->imageFileName, $old);
             }
 
-            $image_th = null;            
+            $image_th = null;
             if(isset($data['image_th']) && $data['image_th']) {
                 if(isset($figure->thumb_extension)) $old_th = $figure->thumbFileName;
                 else $old_th = null;
@@ -851,13 +873,13 @@ class EventService extends Service
             $figure->update($data);
 
             return $this->commitReturn($figure);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
     }
 
-    
+
     /**
      * Deletes a figure.
      *
@@ -870,10 +892,10 @@ class EventService extends Service
 
         try {
             if(isset($figure->image_extension)) $this->deleteImage($figure->imagePath, $figure->imageFileName);
-            if(isset($figure->thumb_extension)) $this->deleteImage($figure->imagePath, $figure->thumbFileName); 
+            if(isset($figure->thumb_extension)) $this->deleteImage($figure->imagePath, $figure->thumbFileName);
             $figure->delete();
             return $this->commitReturn(true);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
@@ -882,7 +904,7 @@ class EventService extends Service
     /**
      * Processes user input for creating/updating a figure.
      *
-     * @param  array                  $data 
+     * @param  array                  $data
      * @param  \App\Models\WorldExpansion\Figure  $figure
      * @return array
      */
@@ -902,24 +924,24 @@ class EventService extends Service
 
         if(isset($data['remove_image']))
         {
-            if($figure && isset($figure->image_extension) && $data['remove_image']) 
-            { 
-                $saveData['image_extension'] = null; 
-                $this->deleteImage($figure->imagePath, $figure->imageFileName); 
+            if($figure && isset($figure->image_extension) && $data['remove_image'])
+            {
+                $saveData['image_extension'] = null;
+                $this->deleteImage($figure->imagePath, $figure->imageFileName);
             }
             unset($data['remove_image']);
         }
-        
+
         if(isset($data['remove_image_th']) && $data['remove_image_th'])
         {
-            if($figure && isset($figure->thumb_extension) && $data['remove_image_th']) 
-            { 
-                $saveData['thumb_extension'] = null; 
-                $this->deleteImage($figure->imagePath, $figure->thumbFileName); 
+            if($figure && isset($figure->thumb_extension) && $data['remove_image_th'])
+            {
+                $saveData['thumb_extension'] = null;
+                $this->deleteImage($figure->imagePath, $figure->thumbFileName);
             }
             unset($data['remove_image_th']);
         }
-        
+
         return $saveData;
     }
 
@@ -943,7 +965,7 @@ class EventService extends Service
             }
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);

@@ -9,15 +9,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 use App\Models\User\User;
-use App\Models\WorldExpansion\EventCategory;
-use App\Models\WorldExpansion\Location;
-use App\Models\Item\Item;
-use App\Models\Prompt\Prompt;
-use App\Models\News;
+use App\Models\WorldExpansion\FactionType;
 
-
-class Event extends Model
+class Faction extends Model
 {
+
     use SoftDeletes;
 
     /**
@@ -27,7 +23,7 @@ class Event extends Model
      */
     protected $fillable = [
         'name','description', 'summary', 'parsed_description', 'sort', 'image_extension', 'thumb_extension',
-        'category_id', 'is_active', 'occur_start', 'occur_end'
+        'parent_id', 'type_id', 'is_active', 'display_style', 'is_character_faction', 'is_user_faction',
 
     ];
 
@@ -37,9 +33,7 @@ class Event extends Model
      *
      * @var string
      */
-    protected $table = 'events';
-
-    protected $dates = ['occur_start', 'occur_end'];
+    protected $table = 'factions';
 
     public $timestamps = true;
 
@@ -49,7 +43,7 @@ class Event extends Model
      * @var array
      */
     public static $createRules = [
-        'name' => 'required|unique:events|between:3,50',
+        'name' => 'required|unique:factions|between:3,25',
         'description' => 'nullable',
         'summary' => 'nullable|max:300',
         'image' => 'mimes:png,gif,jpg,jpeg',
@@ -62,7 +56,7 @@ class Event extends Model
      * @var array
      */
     public static $updateRules = [
-        'name' => 'required|between:3,50',
+        'name' => 'required|between:3,25',
         'description' => 'nullable',
         'summary' => 'nullable|max:300',
         'image' => 'mimes:png,gif,jpg,jpeg',
@@ -77,52 +71,37 @@ class Event extends Model
     **********************************************************************************************/
 
     /**
-     * Get the location attached to this location.
+     * Get the type attached to this faction.
      */
-    public function category()
+    public function type()
     {
-        return $this->belongsTo('App\Models\WorldExpansion\EventCategory', 'category_id');
+        return $this->belongsTo('App\Models\WorldExpansion\FactionType', 'type_id');
     }
 
     /**
-     * Get the items attached to this event.
+     * Get parents of this event.
      */
-    public function figures()
+    public function parent()
     {
-        return $this->belongsToMany('App\Models\WorldExpansion\Figure', 'event_figures')->withPivot('id');
+        return $this->belongsTo('App\Models\WorldExpansion\Faction', 'parent_id');
     }
 
     /**
-     * Get the locations attached to this event.
+     * Get children of this event.
      */
-    public function locations()
+    public function children()
     {
-        return $this->belongsToMany('App\Models\WorldExpansion\Location', 'event_locations')->withPivot('id');
+        return $this->hasMany('App\Models\WorldExpansion\Faction', 'parent_id');
     }
 
     /**
-     * Get the newses attached to this event.
+     * Get the events attached to this faction.
      */
-    public function newses()
+    public function events()
     {
-        return $this->belongsToMany('App\Models\News', 'event_newses')->withPivot('id');
+        return $this->belongsToMany('App\Models\WorldExpansion\Event', 'event_factions')->withPivot('id');
     }
 
-    /**
-     * Get the prompts attached to this event.
-     */
-    public function prompts()
-    {
-        return $this->belongsToMany('App\Models\Prompt\Prompt', 'event_prompts')->withPivot('id');
-    }
-
-    /**
-     * Get the factions attached to this event.
-     */
-    public function factions()
-    {
-        return $this->belongsToMany('App\Models\WorldExpansion\Faction', 'event_factions')->withPivot('id');
-    }
 
     /**********************************************************************************************
 
@@ -131,7 +110,7 @@ class Event extends Model
     **********************************************************************************************/
 
     /**
-     * Displays the location's name, linked to its purchase page.
+     * Displays the faction's name, linked to its page.
      *
      * @return string
      */
@@ -142,7 +121,7 @@ class Event extends Model
     }
 
     /**
-     * Displays the location's name, linked to its purchase page.
+     * Displays the faction's name, linked to its page.
      *
      * @return string
      */
@@ -154,7 +133,7 @@ class Event extends Model
 
 
     /**
-     * Displays the location's name, linked to its purchase page.
+     * Displays the faction's name, linked to its page.
      *
      * @return string
      */
@@ -171,7 +150,7 @@ class Event extends Model
      */
     public function getImageDirectoryAttribute()
     {
-        return 'images/data/event';
+        return 'images/data/factions';
     }
 
     /**
@@ -193,7 +172,6 @@ class Event extends Model
     {
         return $this->id . '-image.' . $this->image_extension;
     }
-
 
     /**
      * Gets the file name of the model's thumbnail image.
@@ -234,9 +212,34 @@ class Event extends Model
      */
     public function getUrlAttribute()
     {
-        return url('world/events/'.$this->id);
+        return url('world/factions/'.$this->id);
     }
 
+    /**
+     * Gets the list of faction display styles.
+     *
+     * @return string
+     */
+    public function getDisplayStylesAttribute()
+    {
+        return
+            array(
+                0 => $this->name,
+                1 => 'the '.$this->type->name.' of '.$this->name,
+                2 => $this->type->name.' of '.$this->name,
+                3 => $this->name.' '.$this->type->name,
+            );
+    }
+
+    /**
+     * Gets the display style of this particular faction.
+     *
+     * @return string
+     */
+    public function getStyleAttribute()
+    {
+        return $this->displayStyles[$this->display_style];
+    }
 
 
     /**********************************************************************************************
@@ -245,18 +248,16 @@ class Event extends Model
 
     **********************************************************************************************/
 
-
-
     /**
      * Scope a query to sort items in category order.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeSortCategory($query)
+    public function scopeSortFactionType($query)
     {
-        $ids = EventCategory::orderBy('sort', 'DESC')->pluck('id')->toArray();
-        return count($ids) ? $query->orderByRaw(DB::raw('FIELD(category_id, '.implode(',', $ids).')')) : $query;
+        $ids = LocationType::orderBy('sort', 'DESC')->pluck('id')->toArray();
+        return count($ids) ? $query->orderByRaw(DB::raw('FIELD(type_id, '.implode(',', $ids).')')) : $query;
     }
     /**
      * Scope a query to sort items in alphabetical order.
@@ -291,7 +292,5 @@ class Event extends Model
     {
         return $query->orderBy('id');
     }
-
-
 
 }

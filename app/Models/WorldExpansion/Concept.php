@@ -9,14 +9,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 use App\Models\User\User;
-use App\Models\WorldExpansion\EventCategory;
+use App\Models\WorldExpansion\ConceptCategory;
 use App\Models\WorldExpansion\Location;
 use App\Models\Item\Item;
-use App\Models\Prompt\Prompt;
-use App\Models\News;
 
-
-class Event extends Model
+class Concept extends Model
 {
     use SoftDeletes;
 
@@ -26,20 +23,16 @@ class Event extends Model
      * @var array
      */
     protected $fillable = [
-        'name','description', 'summary', 'parsed_description', 'sort', 'image_extension', 'thumb_extension',
-        'category_id', 'is_active', 'occur_start', 'occur_end'
+        'name', 'description', 'summary', 'parsed_description', 'sort', 'image_extension', 'thumb_extension', 'category_id', 'is_active'
 
     ];
-
 
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'events';
-
-    protected $dates = ['occur_start', 'occur_end'];
+    protected $table = 'concepts';
 
     public $timestamps = true;
 
@@ -49,7 +42,7 @@ class Event extends Model
      * @var array
      */
     public static $createRules = [
-        'name' => 'required|unique:events|between:3,50',
+        'name' => 'required|unique:concepts|between:3,25',
         'description' => 'nullable',
         'summary' => 'nullable|max:300',
         'image' => 'mimes:png,gif,jpg,jpeg',
@@ -62,7 +55,7 @@ class Event extends Model
      * @var array
      */
     public static $updateRules = [
-        'name' => 'required|between:3,50',
+        'name' => 'required|between:3,25',
         'description' => 'nullable',
         'summary' => 'nullable|max:300',
         'image' => 'mimes:png,gif,jpg,jpeg',
@@ -77,51 +70,27 @@ class Event extends Model
     **********************************************************************************************/
 
     /**
-     * Get the location attached to this location.
+     * Get the category associated with this concept.
      */
     public function category()
     {
-        return $this->belongsTo('App\Models\WorldExpansion\EventCategory', 'category_id');
+        return $this->belongsTo('App\Models\WorldExpansion\ConceptCategory', 'category_id');
     }
 
     /**
-     * Get the items attached to this event.
+     * Get the items attached to this concept.
      */
-    public function figures()
+    public function items()
     {
-        return $this->belongsToMany('App\Models\WorldExpansion\Figure', 'event_figures')->withPivot('id');
+        return $this->belongsToMany('App\Models\Item\Item', 'concept_items')->withPivot('id');
     }
 
     /**
-     * Get the locations attached to this event.
+     * Get the locations attached to this concept.
      */
     public function locations()
     {
-        return $this->belongsToMany('App\Models\WorldExpansion\Location', 'event_locations')->withPivot('id');
-    }
-
-    /**
-     * Get the newses attached to this event.
-     */
-    public function newses()
-    {
-        return $this->belongsToMany('App\Models\News', 'event_newses')->withPivot('id');
-    }
-
-    /**
-     * Get the prompts attached to this event.
-     */
-    public function prompts()
-    {
-        return $this->belongsToMany('App\Models\Prompt\Prompt', 'event_prompts')->withPivot('id');
-    }
-
-    /**
-     * Get the factions attached to this event.
-     */
-    public function factions()
-    {
-        return $this->belongsToMany('App\Models\WorldExpansion\Faction', 'event_factions')->withPivot('id');
+        return $this->belongsToMany('App\Models\WorldExpansion\Location', 'concept_locations')->withPivot('id');
     }
 
     /**********************************************************************************************
@@ -171,7 +140,7 @@ class Event extends Model
      */
     public function getImageDirectoryAttribute()
     {
-        return 'images/data/event';
+        return 'images/data/concepts';
     }
 
     /**
@@ -234,7 +203,7 @@ class Event extends Model
      */
     public function getUrlAttribute()
     {
-        return url('world/events/'.$this->id);
+        return url('world/concepts/'.$this->id);
     }
 
 
@@ -255,7 +224,7 @@ class Event extends Model
      */
     public function scopeSortCategory($query)
     {
-        $ids = EventCategory::orderBy('sort', 'DESC')->pluck('id')->toArray();
+        $ids = FaunaCategory::orderBy('sort', 'DESC')->pluck('id')->toArray();
         return count($ids) ? $query->orderByRaw(DB::raw('FIELD(category_id, '.implode(',', $ids).')')) : $query;
     }
     /**

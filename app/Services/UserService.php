@@ -13,6 +13,7 @@ use App\Models\User\User;
 use App\Models\Rank\Rank;
 use App\Models\Character\CharacterTransfer;
 use App\Models\WorldExpansion\Location;
+use App\Models\WorldExpansion\Faction;
 use App\Models\Character\CharacterDesignUpdate;
 use App\Models\Submission\Submission;
 use App\Models\Gallery\GallerySubmission;
@@ -100,6 +101,37 @@ class UserService extends Service
                 $user->save();
             }
             else throw new \Exception("You can't change your location yet!");
+
+            return $this->commitReturn(true);
+        } catch(\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Updates a user. Used in modifying the admin user on the command line.
+     *
+     * @param  array  $data
+     * @return \App\Models\User\User
+     */
+    public function updateFaction($id, $user)
+    {
+        DB::beginTransaction();
+
+        try {
+            $faction = Faction::find($id);
+            if(!$faction) throw new \Exception("Not a valid faction.");
+
+            if(!$faction->is_user_faction) throw new \Exception("Not a faction a user can join.");
+
+            $limit = Settings::get('WE_change_timelimit');
+
+            if($user->canChangeFaction) {
+                $user->faction_id = $id;
+                $user->save();
+            }
+            else throw new \Exception("You can't change your faction yet!");
 
             return $this->commitReturn(true);
         } catch(\Exception $e) {

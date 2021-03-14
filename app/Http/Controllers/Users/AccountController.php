@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Notification;
 use App\Models\WorldExpansion\Location;
+use App\Models\WorldExpansion\Faction;
 
 use App\Services\UserService;
 
@@ -60,8 +61,11 @@ class AccountController extends Controller
 
         return view('account.settings',[
             'locations' => Location::all()->where('is_user_home')->pluck('style','id')->toArray(),
+            'factions' => Faction::all()->where('is_user_faction')->pluck('style','id')->toArray(),
             'user_enabled' => Settings::get('WE_user_locations'),
+            'user_faction_enabled' => Settings::get('WE_user_locations'),
             'char_enabled' => Settings::get('WE_character_locations'),
+            'char_faction_enabled' => Settings::get('WE_character_locations'),
             'location_interval' => $interval[Settings::get('WE_change_timelimit')]
         ]);
     }
@@ -115,6 +119,24 @@ class AccountController extends Controller
         }
         return redirect()->back();
     }
+
+    /**
+     * Edits the user's faction from a list of factions that users can make their home.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postFaction(Request $request, UserService $service)
+    {
+        if($service->updateFaction($request->input('faction'), Auth::user())) {
+            flash('Faction updated successfully.')->success();
+        }
+        else {
+            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
+        }
+        return redirect()->back();
+    }
+
 
     /**
      * Changes the user's password.

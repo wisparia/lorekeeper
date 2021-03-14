@@ -61,6 +61,35 @@
     @endif
 @endif
 
+@if($user_faction_enabled == 1 || (Auth::user()->isStaff && $user_faction_enabled == 2))
+<h3>Faction <span class="text-muted">({{ ucfirst($location_interval) }})</span></h3>
+    @if(Auth::user()->isStaff && $user_enabled == 2)
+        <div class="alert alert-warning">You can edit this because you are a staff member. Normal users cannot edit their own faction freely.</div>
+    @endif
+    @if($char_enabled == 1)
+        <div class="alert alert-warning">Your characters will have the same faction as you.</div>
+    @endif
+    @if(Auth::user()->canChangeFaction)
+        {!! Form::open(['url' => 'account/faction']) !!}
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label">Faction</label>
+                <div class="col-md-9">
+                {!! Form::select('faction', [0=>'Choose a Faction'] + $factions, isset(Auth::user()->faction_id) ? Auth::user()->faction_id : 0, ['class' => 'form-control selectize']) !!}
+                </div>
+                <div class="col-md text-right">
+                    {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
+                </div>
+            </div>
+        {!! Form::close() !!}
+    @else
+        <div class="alert alert-warning">
+        <strong>You can't change your faction right now.</strong>
+        You last changed it on {!! format_date(Auth::user()->faction_changed, false) !!}.
+        Faction can be changed {{ $location_interval }}.
+        </div>
+    @endif
+@endif
+
 <h3>Email Address</h3>
 
 <p>Changing your email address will require you to re-verify your email address.</p>

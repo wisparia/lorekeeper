@@ -1,10 +1,10 @@
 @extends('worldexpansion.layout')
 
-@section('title') Events @endsection
+@section('title') Concept @endsection
 
 @section('content')
-{!! breadcrumbs(['World' => 'world', 'Events' => 'world/events']) !!}
-<h1>Events</h1>
+{!! breadcrumbs(['World' => 'world', 'Concepts' => 'world/concepts']) !!}
+<h1>Concepts</h1>
 
 <div>
     {!! Form::open(['method' => 'GET', 'class' => '']) !!}
@@ -33,38 +33,35 @@
     {!! Form::close() !!}
 </div>
 
-{!! $events->render() !!}
+{!! $concepts->render() !!}
 <div class="row mx-0">
-    @foreach($events as $event)
+    @foreach($concepts as $concept)
         <div class="col-12 col-md-4 mb-3"><div class="card mb-3 p-3 h-100">
             <div class="world-entry-image">
-            @isset($event->thumb_extension)
-                <a href="{{ $event->thumbUrl }}" data-lightbox="entry" data-title="{{ $event->name }}"><img src="{{ $event->thumbUrl }}" class="world-entry-image mb-3 mw-100" /></a>
+            @isset($concept->thumb_extension)
+                <a href="{{ $concept->thumbUrl }}" data-lightbox="entry" data-title="{{ $concept->name }}"><img src="{{ $concept->thumbUrl }}" class="world-entry-image mb-3 mw-100" /></a>
             @endisset
             </div>
-            <h3 class="mb-0 text-center">{!! $event->displayName !!}</h3>
-            <p class="mb-0 text-center">{!! $event->category ? $event->category->displayName : '' !!}</p>
+            <h3 class="mb-0 text-center">{!! $concept->displayName !!}</h3>
+            <p class="mb-0 text-center">{!! $concept->category ? $concept->category->displayName : '' !!}</p>
 
-            @if(count($event->locations))
-                <p class="text-center mb-0">Associated with {{ count($event->locations) }} location{{ count($event->locations) == 1 ? '' : 's' }}.</p>
+            @if(count($concept->locations))
+                <p class="text-center mb-0">Found in {{ count($concept->locations) }} location{{ count($concept->locations) == 1 ? '' : 's' }}.</p>
             @endif
-            @if(count($event->factions))
-                <p class="text-center mb-0">Associated with {{ count($event->factions) }} faction{{ count($event->factions) == 1 ? '' : 's' }}.</p>
-            @endif
-            @if(count($event->figures))
-                <p class="text-center mb-0">Associated with {{ count($event->figures) }} figure{{ count($event->figures) == 1 ? '' : 's' }}.</p>
+            @if(count($concept->items))
+                <p class="text-center mb-0">Associated with {{ count($concept->items) }} item{{ count($concept->items) == 1 ? '' : 's' }}.</p>
             @endif
 
-            @isset($event->summary)
+            @isset($concept->summary)
             <hr>
-                <p class="mb-0"> {!! $event->summary !!}</p>
+                <p class="mb-0"> {!! $concept->summary !!}</p>
             @endisset
 
         </div></div>
     @endforeach
 </div>
-{!! $events->render() !!}
+{!! $concepts->render() !!}
 
-<div class="text-center mt-4 small text-muted">{{ $events->total() }} result{{ $events->total() == 1 ? '' : 's' }} found.</div>
+<div class="text-center mt-4 small text-muted">{{ $concepts->total() }} result{{ $concepts->total() == 1 ? '' : 's' }} found.</div>
 
 @endsection

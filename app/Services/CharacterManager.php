@@ -1279,8 +1279,10 @@ class CharacterManager extends Service
             if(!$character->is_myo_slot) $character->name = $data['name'];
             $character->save();
 
-            // Update the character's location
+            // Update the character's location and/or faction
             if(isset($data['location']) && $data['location']) $character->home_id = $data['location'];
+            // Update the character's location
+            if(isset($data['faction']) && $data['faction']) $character->faction_id = $data['faction'];
             $character->save();
 
             if(!$character->is_myo_slot && Config::get('lorekeeper.extensions.character_TH_profile_link')) $character->profile->link = $data['link'];

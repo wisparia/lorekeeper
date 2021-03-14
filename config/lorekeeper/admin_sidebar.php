@@ -201,6 +201,14 @@ return [
                 'name' => ' Figures',
                 'url' => 'admin/world/figures'
             ],
+            [
+                'name' => 'Factions',
+                'url' => 'admin/world/factions'
+            ],
+            [
+                'name' => 'Concepts',
+                'url' => 'admin/world/concepts'
+            ],
         ]
     ],
     'Raffles' => [

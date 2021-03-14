@@ -65,13 +65,26 @@ class AddWorldExpansion extends Command
                 [
                     'key' => 'WE_user_locations',
                     'value' => 0,
-                    'description' => '0: Users do not have locations. 1: Users can freely change locations. 2: Only admins can freely change user locations'
+                    'description' => '0: Users do not have locations. 1: Users can freely change locations. 2: Only admins can freely change user locations.'
                 ]
 
             ]);
             $this->info("Added:   WE_user_locations / Default: 0");
         }
         else $this->line("Skipped: WE_user_locations");
+
+        if(!DB::table('site_settings')->where('key', 'WE_user_factions')->exists()) {
+            DB::table('site_settings')->insert([
+                [
+                    'key' => 'WE_user_factions',
+                    'value' => 0,
+                    'description' => '0: Users do not have factions. 1: Users can freely change factions. 2: Only admins can freely change user factions.'
+                ]
+
+            ]);
+            $this->info("Added:   WE_user_factions / Default: 0");
+        }
+        else $this->line("Skipped: WE_user_factions");
 
         if(!DB::table('site_settings')->where('key', 'WE_character_locations')->exists()) {
             DB::table('site_settings')->insert([
@@ -86,12 +99,25 @@ class AddWorldExpansion extends Command
         }
         else $this->line("Skipped: WE_character_locations");
 
+        if(!DB::table('site_settings')->where('key', 'WE_character_factions')->exists()) {
+            DB::table('site_settings')->insert([
+                [
+                    'key' => 'WE_character_factions',
+                    'value' => 0,
+                    'description' => '0: Characters do not have factions. 1: Characters\' factions are the same as their owners. 2: Users can edit their own character factions. 3: Only admins can edit character factions.'
+                ]
+
+            ]);
+            $this->info("Added:   WE_character_factions / Default: 0");
+        }
+        else $this->line("Skipped: WE_character_factions");
+
         $this->line("\nWorld Expansion settings up to date!");
 
         //
         $pages = Config::get('lorekeeper.text_pages');
 
-        
+
         $this->line("\n");
         $this->info('******************');
         $this->info('* ADD WORLD PAGE *');
@@ -99,7 +125,7 @@ class AddWorldExpansion extends Command
 
         $this->line("Adding site page...existing entries will be skipped.\n");
 
-        
+
         if(!DB::table('site_pages')->where('key', 'world')->exists()) {
             DB::table('site_pages')->insert([
                 [
@@ -115,7 +141,7 @@ class AddWorldExpansion extends Command
             $this->info("Added:   World Info Page");
         }
         else $this->line("Skipped: World Info Page");
-        
-        
+
+
     }
 }
