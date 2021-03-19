@@ -102,6 +102,22 @@ class Faction extends Model
         return $this->belongsToMany('App\Models\WorldExpansion\Event', 'event_factions')->withPivot('id');
     }
 
+    /**
+     * Get the figures associated with this faction.
+     */
+    public function figures()
+    {
+        return $this->belongsToMany('App\Models\WorldExpansion\Figure', 'faction_figures')->withPivot('id');
+    }
+
+    /**
+     * Get the member figures associated with this faction.
+     */
+    public function members()
+    {
+        return $this->hasMany('App\Models\WorldExpansion\Figure', 'faction_id');
+    }
+
 
     /**********************************************************************************************
 

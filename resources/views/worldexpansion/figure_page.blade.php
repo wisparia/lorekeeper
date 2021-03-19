@@ -6,6 +6,7 @@
 {!! breadcrumbs(['World' => 'world', 'Figure' => 'world/figures', $figure->name => 'world/figures/'.$figure->id]) !!}
 <h1 ><img src="{{$figure->thumbUrl}}" style="max-height:25px;vertical-align:inherit;"/>{!! $figure->displayName !!}</h1>
 <h5>{!! $figure->category ? ucfirst($figure->category->displayName) : 'Miscellaneous' !!}
+    {!! $figure->faction ? '・ Part of '.ucfirst($figure->faction->displayName) : '' !!}
 
 @if($figure->birth_date || $figure->death_date)
     <span class="ml-4 text-muted">{!! $figure->birth_date ? 'Born: '.format_date($figure->birth_date, false) : 'Born: Unknown' !!} {!! $figure->death_date ? '- Died: '.format_date($figure->death_date, false) : '- Died: Unknown' !!}</span>
@@ -19,7 +20,7 @@
 @isset($figure->summary)
 <div class="world-entry-text px-3 text-center">{!! $figure->summary !!}</div>
 @endisset
-    
+
 @isset($figure->parsed_description)
 <div class="world-entry-text px-3">
     {!! $figure->parsed_description !!}
@@ -33,20 +34,20 @@
         <!-- <hr>
         <p class="mb-0">
             @foreach($figure->items as $key => $item)
-                @if($item->has_image) 
+                @if($item->has_image)
                     <a href="{{ $item->url }}" data-toggle="tooltip" title="{{ $item->name }}"/><img src="{{$item->imageUrl}}" class="m-1" style="max-width:100px"/> </a>
-                @else  
+                @else
                     {!! $item->displayName !!}
                 @endif
             @endforeach
         </p> -->
-        
+
         <hr>
         @foreach($figure->items->groupBy('item_category_id') as $key => $items)
         <p class="mb-0">
             <strong>
                 {{ $item_categories->find($key) ? $item_categories->find($key)->name : 'Miscellanous' }}:
-            </strong> 
+            </strong>
             @foreach($items as $key => $item) <strong>{!! $item->displayName !!}</strong>@if($key != count($items)-1 && count($items)>2),@endif @if($key == count($items)-2) and @endif @endforeach
         </p>
         @endforeach
@@ -58,20 +59,20 @@
         <!-- <hr>
         <p class="mb-0">
             @foreach($figure->events as $key => $event)
-                @if($event->thumb_extension) 
+                @if($event->thumb_extension)
                     <a href="{{ $event->url }}" data-toggle="tooltip" title="{{ $event->name }}"/><img src="{{$event->thumbUrl}}" class="m-1" style="max-width:100px"/> </a>
-                @else  
+                @else
                     {!! $event->displayName !!}
                 @endif
             @endforeach
         </p> -->
-        
+
         <hr>
         @foreach($figure->events->groupBy('category_id') as $key => $events)
         <p class="mb-0">
             <strong>
                 {{ $event_categories->find($key) ? $event_categories->find($key)->name : 'Miscellanous' }}:
-            </strong> 
+            </strong>
             @foreach($events as $key => $event) <strong>{!! $event->displayName !!}</strong>@if($key != count($events)-1 && count($events)>2),@endif @if($key == count($events)-2) and @endif @endforeach
         </p>
         @endforeach

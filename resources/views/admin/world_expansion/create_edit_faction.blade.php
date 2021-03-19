@@ -94,6 +94,22 @@
     {!! Form::textarea('description', $faction->description, ['class' => 'form-control wysiwyg']) !!}
 </div>
 
+@if($faction->id)
+    <h3>Associated Figures</h3>
+    <p>These figures are associated with this faction, but not listed as members of it. To set a figure as a member of this faction, edit the figure themself.</p>
+    <div class="form-group row">
+        <div id="figureList" class="col-12 row">
+            @foreach($faction->figures as $figure)
+                <div class="d-flex mb-2 col-4">
+                    {!! Form::select('figure_id['.$figure->id.']', $figures, $figure->id, ['class' => 'form-control mr-2 figure-select original', 'placeholder' => 'Select Figure']) !!}
+                    <a href="#" class="remove-figure btn btn-danger mb-2">×</a>
+                </div>
+            @endforeach
+        </div>
+        <div class="col-12 text-right"><a href="#" class="btn btn-primary" id="add-figure">Add Figure</a></div>
+    </div>
+@endif
+
 <div class="form-group">
     {!! Form::checkbox('is_active', 1, $faction->id ? $faction->is_active : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
     {!! Form::label('is_active', 'Set Active', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If turned off, the type will not be visible to regular users.') !!}
@@ -104,6 +120,11 @@
 </div>
 
 {!! Form::close() !!}
+
+<div class="figure-row hide mb-2 col-4">
+    {!! Form::select('figure_id[]', $figures, null, ['class' => 'form-control mr-2 figure-select', 'placeholder' => 'Select Figure']) !!}
+    <a href="#" class="remove-figure btn btn-danger mb-2">×</a>
+</div>
 
 @endsection
 
@@ -116,6 +137,29 @@ $( document ).ready(function() {
         loadModal("{{ url('admin/world/factions/delete') }}/{{ $faction->id }}", 'Delete Faction');
     });
     $('.selectize').selectize();
+
+    $('#add-figure').on('click', function(e) {
+        e.preventDefault();
+        addFigureRow();
+    });
+    $('.remove-figure').on('click', function(e) {
+        e.preventDefault();
+        removeFigureRow($(this));
+    })
+    function addFigureRow() {
+        var $clone = $('.figure-row').clone();
+        $('#figureList').append($clone);
+        $clone.removeClass('hide figure-row');
+        $clone.addClass('d-flex');
+        $clone.find('.remove-figure').on('click', function(e) {
+            e.preventDefault();
+            removeFigureRow($(this));
+        })
+        $clone.find('.figure-select').selectize();
+    }
+    function removeFigureRow($trigger) {
+        $trigger.parent().remove();
+    }
 });
 
 </script>

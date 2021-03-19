@@ -7,6 +7,7 @@ use App\Models\WorldExpansion\Figure;
 use App\Models\WorldExpansion\FigureCategory;
 use App\Models\Item\Item;
 use App\Models\Item\ItemCategory;
+use App\Models\WorldExpansion\Faction;
 
 use App\Models\WorldExpansion\Event;
 use App\Models\WorldExpansion\EventFigure;
@@ -26,7 +27,7 @@ class FigureController extends Controller
 
 
     /**********************************************************************************************
-    
+
         Figure Types
 
     **********************************************************************************************/
@@ -42,7 +43,7 @@ class FigureController extends Controller
             'categories' => FigureCategory::orderBy('sort', 'DESC')->get()
         ]);
     }
-    
+
     /**
      * Shows the create figure category page.
      *
@@ -54,7 +55,7 @@ class FigureController extends Controller
             'category' => new FigureCategory
         ]);
     }
-    
+
     /**
      * Shows the edit figure category page.
      *
@@ -154,7 +155,7 @@ class FigureController extends Controller
 
 
     /**********************************************************************************************
-    
+
         FAUNA
 
     **********************************************************************************************/
@@ -170,7 +171,7 @@ class FigureController extends Controller
             'figures' => Figure::orderBy('sort', 'DESC')->get()
         ]);
     }
-    
+
     /**
      * Shows the create figure figure page.
      *
@@ -184,9 +185,10 @@ class FigureController extends Controller
             'items' => Item::all()->pluck('name','id')->toArray(),
             'figures' => Figure::all()->pluck('name','id')->toArray(),
             'locations' => Location::all()->pluck('name','id')->toArray(),
+            'factions' => Faction::all()->pluck('name','id')->toArray(),
         ]);
     }
-    
+
     /**
      * Shows the edit figure figure page.
      *
@@ -203,6 +205,7 @@ class FigureController extends Controller
             'items' => Item::all()->pluck('name','id')->toArray(),
             'figures' => Figure::all()->pluck('name','id')->toArray(),
             'locations' => Location::all()->pluck('name','id')->toArray(),
+            'factions' => Faction::all()->pluck('name','id')->toArray(),
         ]);
     }
 
@@ -219,9 +222,9 @@ class FigureController extends Controller
         $id ? $request->validate(Figure::$updateRules) : $request->validate(Figure::$createRules);
 
         $data = $request->only([
-            'name', 'description', 'image', 'image_th', 'remove_image', 'remove_image_th', 
+            'name', 'description', 'image', 'image_th', 'remove_image', 'remove_image_th',
             'is_active', 'summary', 'category_id', 'item_id', 'location_id',
-            'birth_date', 'death_date'
+            'birth_date', 'death_date', 'faction_id'
         ]);
         if($id && $service->updateFigure(Figure::find($id), $data, Auth::user())) {
             flash('Figure updated successfully.')->success();
@@ -288,5 +291,5 @@ class FigureController extends Controller
     }
 
 
-    
+
 }

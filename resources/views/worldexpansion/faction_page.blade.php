@@ -59,6 +59,60 @@
     </div></div>
     @endif
 
+    @if(count($faction->members))
+    <div class="text-center col-md mb-3 fb-md-50"><div class="card h-100 py-3">
+     <h5 class="mb-0">Member Figure{{ count($faction->members) == 1 ? '' : 's'}}</h5>
+
+        <!-- <hr>
+        <p class="mb-0">
+            @foreach($faction->members as $key => $member)
+                @if($member->thumb_extension)
+                    <a href="{{ $member->url }}" data-toggle="tooltip" title="{{ $member->name }}"/><img src="{{$member->thumbUrl}}" class="m-1" style="max-width:100px"/> </a>
+                @else
+                    {!! $member->displayName !!}
+                @endif
+            @endforeach
+        </p> -->
+
+        <hr>
+        @foreach($faction->members->groupBy('category_id') as $key => $members)
+        <p class="mb-0">
+            <strong>
+                {{ $figure_categories->find($key) ? $figure_categories->find($key)->name : 'Miscellanous' }}:
+            </strong>
+            @foreach($members as $key => $member) <strong>{!! $member->displayName !!}</strong>@if($key != count($members)-1 && count($members)>2),@endif @if($key == count($members)-2) and @endif @endforeach
+        </p>
+        @endforeach
+    </div></div>
+    @endif
+
+    @if(count($faction->figures))
+    <div class="text-center col-md mb-3 fb-md-50"><div class="card h-100 py-3">
+     <h5 class="mb-0">Associated Figure{{ count($faction->figures) == 1 ? '' : 's'}}</h5>
+
+        <!-- <hr>
+        <p class="mb-0">
+            @foreach($faction->figures as $key => $figure)
+                @if($figure->thumb_extension)
+                    <a href="{{ $figure->url }}" data-toggle="tooltip" title="{{ $figure->name }}"/><img src="{{$figure->thumbUrl}}" class="m-1" style="max-width:100px"/> </a>
+                @else
+                    {!! $figure->displayName !!}
+                @endif
+            @endforeach
+        </p> -->
+
+        <hr>
+        @foreach($faction->figures->groupBy('category_id') as $key => $figures)
+        <p class="mb-0">
+            <strong>
+                {{ $figure_categories->find($key) ? $figure_categories->find($key)->name : 'Miscellanous' }}:
+            </strong>
+            @foreach($figures as $key => $figure) <strong>{!! $figure->displayName !!}</strong>@if($key != count($figures)-1 && count($figures)>2),@endif @if($key == count($figures)-2) and @endif @endforeach
+        </p>
+        @endforeach
+    </div></div>
+    @endif
+
     @if(count($faction->events))
     <div class="text-center col-md mb-3 fb-md-50"><div class="card h-100 py-3">
      <h5 class="mb-0">Associated Event{{ count($faction->events) == 1 ? '' : 's'}}</h5>
@@ -86,11 +140,6 @@
     </div></div>
     @endif
 
-
-
-
 </div>
-
-
 
 @endsection

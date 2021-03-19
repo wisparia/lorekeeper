@@ -34,7 +34,7 @@ class FigureService extends Service
     /**
      * Creates a new figure category.
      *
-     * @param  array                  $data 
+     * @param  array                  $data
      * @param  \App\Models\User\User  $user
      * @return bool|\App\Models\Figure\Category
      */
@@ -72,17 +72,17 @@ class FigureService extends Service
             }
 
             return $this->commitReturn($category);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
     }
-    
+
     /**
      * Updates a category.
      *
      * @param  \App\Models\Category\Category  $category
-     * @param  array                  $data 
+     * @param  array                  $data
      * @param  \App\Models\User\User  $user
      * @return bool|\App\Models\Category\Category
      */
@@ -96,7 +96,7 @@ class FigureService extends Service
 
             $data = $this->populateFigureCategoryData($data, $category);
 
-            $image = null;            
+            $image = null;
             if(isset($data['image']) && $data['image']) {
                 if(isset($category->image_extension)) $old = $category->imageFileName;
                 else $old = null;
@@ -109,7 +109,7 @@ class FigureService extends Service
                 $this->handleImage($image, $category->imagePath, $category->imageFileName, $old);
             }
 
-            $image_th = null;            
+            $image_th = null;
             if(isset($data['image_th']) && $data['image_th']) {
                 if(isset($category->thumb_extension)) $old_th = $category->thumbFileName;
                 else $old_th = null;
@@ -125,14 +125,14 @@ class FigureService extends Service
             $category->update($data);
 
             return $this->commitReturn($category);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
     }
 
 
-    
+
     /**
      * Deletes a category.
      *
@@ -145,18 +145,18 @@ class FigureService extends Service
 
         try {
             if(isset($category->image_extension)) $this->deleteImage($category->imagePath, $category->imageFileName);
-            if(isset($category->thumb_extension)) $this->deleteImage($category->imagePath, $category->thumbFileName); 
+            if(isset($category->thumb_extension)) $this->deleteImage($category->imagePath, $category->thumbFileName);
 
             if(count($category->figures)){
                 foreach($category->figures as $figure){
                     if(isset($figure->image_extension)) $this->deleteImage($figure->imagePath, $figure->imageFileName);
-                    if(isset($figure->thumb_extension)) $this->deleteImage($figure->imagePath, $figure->thumbFileName); 
+                    if(isset($figure->thumb_extension)) $this->deleteImage($figure->imagePath, $figure->thumbFileName);
                 }
             }
 
             $category->delete();
             return $this->commitReturn(true);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
@@ -181,7 +181,7 @@ class FigureService extends Service
             }
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
@@ -190,7 +190,7 @@ class FigureService extends Service
     /**
      * Processes user input for creating/updating a category.
      *
-     * @param  array                  $data 
+     * @param  array                  $data
      * @param  \App\Models\Category\Category  $category
      * @return array
      */
@@ -202,25 +202,25 @@ class FigureService extends Service
 
         if(isset($data['remove_image']))
         {
-            if($category && isset($category->image_extension) && $data['remove_image']) 
-            { 
-                $data['image_extension'] = null; 
-                $this->deleteImage($category->imagePath, $category->imageFileName); 
+            if($category && isset($category->image_extension) && $data['remove_image'])
+            {
+                $data['image_extension'] = null;
+                $this->deleteImage($category->imagePath, $category->imageFileName);
             }
             unset($data['remove_image']);
         }
-        
+
         if(isset($data['remove_image_th']) && $data['remove_image_th'])
         {
-            if($category && isset($category->thumb_extension) && $data['remove_image_th']) 
-            { 
-                $data['thumb_extension'] = null; 
-                $this->deleteImage($category->imagePath, $category->thumbFileName); 
+            if($category && isset($category->thumb_extension) && $data['remove_image_th'])
+            {
+                $data['thumb_extension'] = null;
+                $this->deleteImage($category->imagePath, $category->thumbFileName);
             }
             unset($data['remove_image_th']);
         }
-        
-        
+
+
         return $data;
     }
 
@@ -238,7 +238,7 @@ class FigureService extends Service
     /**
      * Creates a new figure.
      *
-     * @param  array                  $data 
+     * @param  array                  $data
      * @param  \App\Models\User\User  $user
      * @return bool|\App\Models\Figure\Category
      */
@@ -275,17 +275,17 @@ class FigureService extends Service
             }
 
             return $this->commitReturn($figure);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
     }
-    
+
     /**
      * Updates a figure.
      *
      * @param  \App\Models\WorldExpansion\Figure  $figure
-     * @param  array                  $data 
+     * @param  array                  $data
      * @param  \App\Models\User\User  $user
      * @return bool|\App\Models\WorldExpansion\Figure
      */
@@ -323,7 +323,7 @@ class FigureService extends Service
 
             $data = $this->populateFigureData($data, $figure);
 
-            $image = null;            
+            $image = null;
             if(isset($data['image']) && $data['image']) {
                 if(isset($figure->image_extension)) $old = $figure->imageFileName;
                 else $old = null;
@@ -336,7 +336,7 @@ class FigureService extends Service
                 $this->handleImage($image, $figure->imagePath, $figure->imageFileName, $old);
             }
 
-            $image_th = null;            
+            $image_th = null;
             if(isset($data['image_th']) && $data['image_th']) {
                 if(isset($figure->thumb_extension)) $old_th = $figure->thumbFileName;
                 else $old_th = null;
@@ -353,13 +353,13 @@ class FigureService extends Service
             $figure->update($data);
 
             return $this->commitReturn($figure);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
     }
 
-    
+
     /**
      * Deletes a figure.
      *
@@ -372,10 +372,10 @@ class FigureService extends Service
 
         try {
             if(isset($figure->image_extension)) $this->deleteImage($figure->imagePath, $figure->imageFileName);
-            if(isset($figure->thumb_extension)) $this->deleteImage($figure->imagePath, $figure->thumbFileName); 
+            if(isset($figure->thumb_extension)) $this->deleteImage($figure->imagePath, $figure->thumbFileName);
             $figure->delete();
             return $this->commitReturn(true);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
@@ -384,7 +384,7 @@ class FigureService extends Service
     /**
      * Processes user input for creating/updating a figure.
      *
-     * @param  array                  $data 
+     * @param  array                  $data
      * @param  \App\Models\WorldExpansion\Figure  $figure
      * @return array
      */
@@ -398,29 +398,30 @@ class FigureService extends Service
         if(isset($data['name']) && $data['name']) $saveData['name'] = parse($data['name']);
         $saveData['is_active'] = isset($data['is_active']);
         $saveData['category_id'] = isset($data['category_id']) && $data['category_id'] ? $data['category_id'] : null;
+        $saveData['faction_id'] = isset($data['faction_id']) && $data['faction_id'] ? $data['faction_id'] : null;
 
         $saveData['image'] = isset($data['image']) ? $data['image'] : null;
         $saveData['image_th'] = isset($data['image_th']) ? $data['image_th'] : null;
-        
+
         $saveData['birth_date'] = isset($data['birth_date']) ? $data['birth_date'] : null;
         $saveData['death_date'] = isset($data['death_date']) ? $data['death_date'] : null;
-    
+
         if(isset($data['remove_image']))
         {
-            if($figure && isset($figure->image_extension) && $data['remove_image']) 
-            { 
-                $saveData['image_extension'] = null; 
-                $this->deleteImage($figure->imagePath, $figure->imageFileName); 
+            if($figure && isset($figure->image_extension) && $data['remove_image'])
+            {
+                $saveData['image_extension'] = null;
+                $this->deleteImage($figure->imagePath, $figure->imageFileName);
             }
             unset($data['remove_image']);
         }
-        
+
         if(isset($data['remove_image_th']) && $data['remove_image_th'])
         {
-            if($figure && isset($figure->thumb_extension) && $data['remove_image_th']) 
-            { 
-                $saveData['thumb_extension'] = null; 
-                $this->deleteImage($figure->imagePath, $figure->thumbFileName); 
+            if($figure && isset($figure->thumb_extension) && $data['remove_image_th'])
+            {
+                $saveData['thumb_extension'] = null;
+                $this->deleteImage($figure->imagePath, $figure->thumbFileName);
             }
             unset($data['remove_image_th']);
         }
@@ -448,7 +449,7 @@ class FigureService extends Service
             }
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
