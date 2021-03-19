@@ -7,12 +7,12 @@
 <h1><img src="{{$faction->thumbUrl}}" style="max-height:25px;vertical-align:inherit;"/>{!! $faction->style !!}</h1>
 <h5 class="mb-0">{!! ucfirst($faction->type->displayName) !!} {!! $faction->parent ? 'inside '.$faction->parent->displayName : '' !!}</h5>
 
-@if(($user_enabled && $faction->is_user_home) || ($ch_enabled && $faction->is_character_home))
+@if(($user_enabled && $faction->is_user_faction) || ($ch_enabled && $faction->is_character_faction))
     <p class="mb-0"><strong>
-    Can be home to
-    {!! $faction->is_character_home && $faction->is_user_home ? 'both' : '' !!}
-    {!! $user_enabled && $faction->is_user_home ? 'users' : '' !!}{!! $faction->is_character_home && $faction->is_user_home ? ' and' : '' !!}{!! !$faction->is_character_home && $faction->is_user_home ? '.' : '' !!}
-    {!! $ch_enabled && $faction->is_character_home ? 'characters.' : '' !!}
+    Can be joined by
+    {!! $faction->is_character_faction && $faction->is_user_faction ? 'both' : '' !!}
+    {!! $user_enabled && $faction->is_user_faction ? 'users' : '' !!}{!! $faction->is_character_faction && $faction->is_user_faction ? ' and' : '' !!}{!! !$faction->is_character_faction && $faction->is_user_faction ? '.' : '' !!}
+    {!! $ch_enabled && $faction->is_character_faction ? 'characters.' : '' !!}
     </strong></p>
 @endif
 
