@@ -156,7 +156,7 @@
         </p> -->
 
         <hr>
-        @foreach($location->factions->groupBy('category_id') as $key => $factions)
+        @foreach($location->factions->groupBy('type_id') as $key => $factions)
         <p class="mb-0">
             <strong>
                 {{ $faction_categories->find($key) ? $faction_categories->find($key)->name : 'Miscellanous' }}:
