@@ -13,6 +13,8 @@ use App\Models\WorldExpansion\Figure;
 use App\Models\WorldExpansion\FigureCategory;
 use App\Models\Item\Item;
 use App\Models\Item\ItemCategory;
+use App\Models\WorldExpansion\Faction;
+use App\Models\WorldExpansion\FactionType;
 
 use App\Models\WorldExpansion\Event;
 use App\Models\WorldExpansion\EventFigure;
@@ -25,11 +27,11 @@ class FigureController extends Controller
     | Figure Controller
     |--------------------------------------------------------------------------
     |
-    | This controller shows figures and their categories, as well as the 
+    | This controller shows figures and their categories, as well as the
     | main World Info page created in the World Expansion extension.
     |
     */
-    
+
     /**
      * Shows the figures page.
      *
@@ -41,12 +43,12 @@ class FigureController extends Controller
         $query = FigureCategory::query();
         $name = $request->get('name');
         if($name) $query->where('name', 'LIKE', '%'.$name.'%');
-        return view('worldexpansion.figure_categories', [  
+        return view('worldexpansion.figure_categories', [
             'categories' => $query->orderBy('sort', 'DESC')->paginate(20)->appends($request->query())
 
         ]);
     }
-    
+
     /**
      * Shows the figures page.
      *
@@ -62,7 +64,7 @@ class FigureController extends Controller
             'category' => $category
         ]);
     }
-    
+
     /**
      * Shows the figures page.
      *
@@ -73,12 +75,12 @@ class FigureController extends Controller
     {
         $query = Figure::with('category');
         $data = $request->only(['category_id', 'name', 'sort']);
-        if(isset($data['category_id']) && $data['category_id'] != 'none') 
+        if(isset($data['category_id']) && $data['category_id'] != 'none')
             $query->where('category_id', $data['category_id']);
-        if(isset($data['name'])) 
+        if(isset($data['name']))
             $query->where('name', 'LIKE', '%'.$data['name'].'%');
 
-        if(isset($data['sort'])) 
+        if(isset($data['sort']))
         {
             switch($data['sort']) {
                 case 'alpha':
@@ -97,7 +99,7 @@ class FigureController extends Controller
                     $query->sortOldest();
                     break;
             }
-        } 
+        }
         else $query->sortCategory();
 
         return view('worldexpansion.figures', [
@@ -105,7 +107,7 @@ class FigureController extends Controller
             'categories' => ['none' => 'Any Category'] + FigureCategory::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray()
         ]);
     }
-    
+
     /**
      * Shows the figures page.
      *
@@ -122,9 +124,10 @@ class FigureController extends Controller
             'figure_categories'     => FigureCategory::where('is_active',1)->get(),
             'item_categories'       => ItemCategory::get(),
             'event_categories'      => EventCategory::where('is_active',1)->get(),
+            'faction_categories'      => FactionType::where('is_active',1)->get(),
         ]);
     }
-    
-    
+
+
 
 }
