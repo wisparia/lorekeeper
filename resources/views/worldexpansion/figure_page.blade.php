@@ -78,6 +78,33 @@
         @endforeach
     </div></div>
     @endif
+
+    @if(count($figure->factions))
+    <div class="text-center col-md mb-3 fb-md-50"><div class="card h-100 py-3">
+     <h5 class="mb-0">Associated Faction{{ count($figure->factions) == 1 ? '' : 's'}}</h5>
+
+        <!-- <hr>
+        <p class="mb-0">
+            @foreach($figure->factions as $key => $faction)
+                @if($faction->thumb_extension)
+                    <a href="{{ $faction->url }}" data-toggle="tooltip" title="{{ $faction->name }}"/><img src="{{$faction->thumbUrl}}" class="m-1" style="max-width:100px"/> </a>
+                @else
+                    {!! $faction->displayName !!}
+                @endif
+            @endforeach
+        </p> -->
+
+        <hr>
+        @foreach($figure->factions->groupBy('type_id') as $key => $factions)
+        <p class="mb-0">
+            <strong>
+                {{ $faction_categories->find($key) ? $faction_categories->find($key)->name : 'Miscellanous' }}:
+            </strong>
+            @foreach($factions as $key => $faction) <strong>{!! $faction->displayName !!}</strong>@if($key != count($factions)-1 && count($factions)>2),@endif @if($key == count($factions)-2) and @endif @endforeach
+        </p>
+        @endforeach
+    </div></div>
+    @endif
 </div>
 
 

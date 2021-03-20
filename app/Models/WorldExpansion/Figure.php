@@ -106,6 +106,14 @@ class Figure extends Model
         return $this->belongsToMany('App\Models\WorldExpansion\Event', 'event_figures')->withPivot('id');
     }
 
+    /**
+     * Get the factions attached to this figure.
+     */
+    public function factions()
+    {
+        return $this->belongsToMany('App\Models\WorldExpansion\Faction', 'faction_figures')->withPivot('id');
+    }
+
     /**********************************************************************************************
 
         ACCESSORS
