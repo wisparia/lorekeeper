@@ -142,7 +142,7 @@
 
     @if(count($faction->locations))
     <div class="text-center col-md mb-3 fb-md-50"><div class="card h-100 py-3">
-     <h5 class="mb-0">Associated Locations{{ count($faction->locations) == 1 ? '' : 's'}}</h5>
+     <h5 class="mb-0">Associated Location{{ count($faction->locations) == 1 ? '' : 's'}}</h5>
 
         <!-- <hr>
         <p class="mb-0">
