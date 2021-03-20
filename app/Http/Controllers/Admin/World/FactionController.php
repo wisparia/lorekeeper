@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\World;
 use App\Models\WorldExpansion\Faction;
 use App\Models\WorldExpansion\FactionType;
 use App\Models\WorldExpansion\Figure;
+use App\Models\WorldExpansion\Location;
 use Auth;
 
 use Settings;
@@ -171,7 +172,6 @@ class FactionController extends Controller
             'faction' => new Faction,
             'types' => FactionType::all()->pluck('name','id')->toArray(),
             'factions' => Faction::all()->pluck('name','id')->toArray(),
-            'figures' => Figure::all()->pluck('name','id')->toArray(),
             'ch_enabled' => Settings::get('WE_character_factions'),
             'user_enabled' => Settings::get('WE_user_factions')
         ]);
@@ -191,6 +191,7 @@ class FactionController extends Controller
             'faction' => $faction,
             'types' => FactionType::all()->pluck('name','id')->toArray(),
             'factions' => Faction::all()->where('id','!=',$faction->id)->pluck('name','id')->toArray(),
+            'locations' => Location::all()->pluck('name','id')->toArray(),
             'figures' => Figure::all()->pluck('name','id')->toArray(),
             'ch_enabled' => Settings::get('WE_character_factions'),
             'user_enabled' => Settings::get('WE_user_factions')
@@ -211,7 +212,8 @@ class FactionController extends Controller
 
         $data = $request->only([
             'name', 'description', 'image', 'image_th', 'remove_image', 'remove_image_th', 'is_active', 'summary',
-            'parent_id', 'type_id', 'user_faction', 'character_faction', 'style', 'figure_id'
+            'parent_id', 'type_id', 'user_faction', 'character_faction', 'style',
+            'figure_id', 'location_id'
         ]);
         if($id && $service->updateFaction(Faction::find($id), $data, Auth::user())) {
             flash('Faction updated successfully.')->success();

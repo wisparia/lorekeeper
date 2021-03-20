@@ -108,6 +108,19 @@
         </div>
         <div class="col-12 text-right"><a href="#" class="btn btn-primary" id="add-figure">Add Figure</a></div>
     </div>
+
+    <h3>Associated Locations</h3>
+    <div class="form-group row">
+        <div id="locationList" class="col-12 row">
+            @foreach($faction->locations as $location)
+                <div class="d-flex mb-2 col-4">
+                    {!! Form::select('location_id['.$location->id.']', $locations, $location->id, ['class' => 'form-control mr-2 location-select original', 'placeholder' => 'Select Location']) !!}
+                    <a href="#" class="remove-location btn btn-danger mb-2">×</a>
+                </div>
+            @endforeach
+        </div>
+        <div class="col-12 text-right"><a href="#" class="btn btn-primary" id="add-location">Add Location</a></div>
+    </div>
 @endif
 
 <div class="form-group">
@@ -126,6 +139,11 @@
     <a href="#" class="remove-figure btn btn-danger mb-2">×</a>
 </div>
 
+<div class="location-row hide mb-2 col-4">
+    {!! Form::select('location_id[]', $locations, null, ['class' => 'form-control mr-2 location-select', 'placeholder' => 'Select Location']) !!}
+    <a href="#" class="remove-location btn btn-danger mb-2">×</a>
+</div>
+
 @endsection
 
 @section('scripts')
@@ -138,6 +156,7 @@ $( document ).ready(function() {
     });
     $('.selectize').selectize();
 
+    $('.original.figure-select').selectize();
     $('#add-figure').on('click', function(e) {
         e.preventDefault();
         addFigureRow();
@@ -158,6 +177,30 @@ $( document ).ready(function() {
         $clone.find('.figure-select').selectize();
     }
     function removeFigureRow($trigger) {
+        $trigger.parent().remove();
+    }
+
+    $('.original.location-select').selectize();
+    $('#add-location').on('click', function(e) {
+        e.preventDefault();
+        addLocationRow();
+    });
+    $('.remove-location').on('click', function(e) {
+        e.preventDefault();
+        removeFigureRow($(this));
+    })
+    function addLocationRow() {
+        var $clone = $('.location-row').clone();
+        $('#locationList').append($clone);
+        $clone.removeClass('hide location-row');
+        $clone.addClass('d-flex');
+        $clone.find('.remove-location').on('click', function(e) {
+            e.preventDefault();
+            removeLocationRow($(this));
+        })
+        $clone.find('.location-select').selectize();
+    }
+    function removeLocationRow($trigger) {
         $trigger.parent().remove();
     }
 });

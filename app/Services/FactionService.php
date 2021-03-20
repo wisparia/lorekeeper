@@ -10,7 +10,9 @@ use Notifications;
 use App\Models\WorldExpansion\FactionType;
 use App\Models\WorldExpansion\Faction;
 use App\Models\WorldExpansion\Figure;
+use App\Models\WorldExpansion\Location;
 use App\Models\WorldExpansion\FactionFigure;
+use App\Models\WorldExpansion\FactionLocation;
 
 class FactionService extends Service
 {
@@ -310,6 +312,26 @@ class FactionService extends Service
             foreach($figures as $key=>$figure) {
                 FactionFigure::create([
                     'figure_id' => $figure->id,
+                    'faction_id' => $faction->id,
+                ]);
+            }
+
+            /***************************************************** FACTION LOCATIONS ***************************************************************/
+            // Determine if there are locations added.
+            if(isset($data['location_id'])) {
+                $data['location_id'] = array_unique($data['location_id']);
+                $locations = Location::whereIn('id', $data['location_id'])->get();
+                if(count($locations) != count($data['location_id'])) throw new \Exception("One or more of the selected locations does not exist.");
+            }
+            else $locations = [];
+
+            // Remove all locations from the event so they can be reattached with new data
+            FactionLocation::where('faction_id', $faction->id)->delete();
+
+            // Attach any locations to the event
+            foreach($locations as $key=>$location) {
+                FactionLocation::create([
+                    'location_id' => $location->id,
                     'faction_id' => $faction->id,
                 ]);
             }

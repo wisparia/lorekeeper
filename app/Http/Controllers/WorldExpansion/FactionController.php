@@ -12,6 +12,7 @@ use App\Models\WorldExpansion\FaunaCategory;
 use App\Models\WorldExpansion\FloraCategory;
 use App\Models\WorldExpansion\EventCategory;
 use App\Models\WorldExpansion\FigureCategory;
+use App\Models\WorldExpansion\LocationType;
 use App\Models\WorldExpansion\FactionType;
 use App\Models\WorldExpansion\Faction;
 
@@ -152,6 +153,7 @@ class FactionController extends Controller
             'flora_categories' => FloraCategory::where('is_active',1)->get(),
             'event_categories' => EventCategory::where('is_active',1)->get(),
             'figure_categories' => FigureCategory::where('is_active',1)->get(),
+            'location_categories' => LocationType::where('is_active',1)->get(),
         ]);
     }
 

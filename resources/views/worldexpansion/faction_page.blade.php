@@ -140,6 +140,33 @@
     </div></div>
     @endif
 
+    @if(count($faction->locations))
+    <div class="text-center col-md mb-3 fb-md-50"><div class="card h-100 py-3">
+     <h5 class="mb-0">Associated Locations{{ count($faction->locations) == 1 ? '' : 's'}}</h5>
+
+        <!-- <hr>
+        <p class="mb-0">
+            @foreach($faction->locations as $key => $location)
+                @if($location->thumb_extension)
+                    <a href="{{ $location->url }}" data-toggle="tooltip" title="{{ $location->name }}"/><img src="{{$location->thumbUrl}}" class="m-1" style="max-width:100px"/> </a>
+                @else
+                    {!! $location->displayName !!}
+                @endif
+            @endforeach
+        </p> -->
+
+        <hr>
+        @foreach($faction->locations->groupBy('category_id') as $key => $locations)
+        <p class="mb-0">
+            <strong>
+                {{ $location_categories->find($key) ? $location_categories->find($key)->name : 'Miscellanous' }}:
+            </strong>
+            @foreach($locations as $key => $location) <strong>{!! $location->displayName !!}</strong>@if($key != count($locations)-1 && count($locations)>2),@endif @if($key == count($locations)-2) and @endif @endforeach
+        </p>
+        @endforeach
+    </div></div>
+    @endif
+
 </div>
 
 @endsection

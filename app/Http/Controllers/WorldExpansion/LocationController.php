@@ -13,6 +13,7 @@ use App\Models\WorldExpansion\FloraCategory;
 use App\Models\WorldExpansion\EventCategory;
 use App\Models\WorldExpansion\Location;
 use App\Models\WorldExpansion\LocationType;
+use App\Models\WorldExpansion\FactionType;
 
 
 class LocationController extends Controller
@@ -22,11 +23,11 @@ class LocationController extends Controller
     | Location Controller
     |--------------------------------------------------------------------------
     |
-    | This controller shows locations and their types, as well as the 
+    | This controller shows locations and their types, as well as the
     | main World Info page created in the World Expansion extension.
     |
     */
-    
+
     /**
      * Shows the locations page.
      *
@@ -64,12 +65,12 @@ class LocationController extends Controller
         $query = LocationType::query();
         $name = $request->get('name');
         if($name) $query->where('name', 'LIKE', '%'.$name.'%');
-        return view('worldexpansion.location_types', [  
+        return view('worldexpansion.location_types', [
             'types' => $query->orderBy('sort', 'DESC')->paginate(20)->appends($request->query())
 
         ]);
     }
-    
+
     /**
      * Shows the locations page.
      *
@@ -85,7 +86,7 @@ class LocationController extends Controller
             'type' => $type
         ]);
     }
-    
+
     /**
      * Shows the locations page.
      *
@@ -96,12 +97,12 @@ class LocationController extends Controller
     {
         $query = Location::with('type');
         $data = $request->only(['type_id', 'name', 'sort']);
-        if(isset($data['type_id']) && $data['type_id'] != 'none') 
+        if(isset($data['type_id']) && $data['type_id'] != 'none')
             $query->where('type_id', $data['type_id']);
-        if(isset($data['name'])) 
+        if(isset($data['name']))
             $query->where('name', 'LIKE', '%'.$data['name'].'%');
 
-        if(isset($data['sort'])) 
+        if(isset($data['sort']))
         {
             switch($data['sort']) {
                 case 'alpha':
@@ -120,7 +121,7 @@ class LocationController extends Controller
                     $query->sortOldest();
                     break;
             }
-        } 
+        }
         else $query->sortLocationType();
 
         return view('worldexpansion.locations', [
@@ -131,7 +132,7 @@ class LocationController extends Controller
             'ch_enabled' => Settings::get('WE_character_locations')
         ]);
     }
-    
+
     /**
      * Shows the locations page.
      *
@@ -151,7 +152,8 @@ class LocationController extends Controller
             'fauna_categories' => FaunaCategory::where('is_active',1)->get(),
             'flora_categories' => FloraCategory::where('is_active',1)->get(),
             'event_categories' => EventCategory::where('is_active',1)->get(),
+            'faction_categories' => FactionType::where('is_active',1)->get(),
         ]);
     }
-    
+
 }

@@ -111,6 +111,14 @@ class Faction extends Model
     }
 
     /**
+     * Get the locations associated with this faction.
+     */
+    public function locations()
+    {
+        return $this->belongsToMany('App\Models\WorldExpansion\Location', 'faction_locations')->withPivot('id');
+    }
+
+    /**
      * Get the member figures associated with this faction.
      */
     public function members()
