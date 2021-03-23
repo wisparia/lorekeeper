@@ -9,6 +9,8 @@ use Settings;
 
 use App\Models\WorldExpansion\Location;
 use App\Models\WorldExpansion\LocationType;
+use App\Models\WorldExpansion\Faction;
+use App\Models\WorldExpansion\FactionType;
 use App\Models\WorldExpansion\Figure;
 use App\Models\WorldExpansion\FigureCategory;
 use App\Models\Item\Item;
@@ -27,11 +29,11 @@ class EventController extends Controller
     | Event Controller
     |--------------------------------------------------------------------------
     |
-    | This controller shows locations and their categories, as well as the 
+    | This controller shows locations and their categories, as well as the
     | main World Info page created in the World Expansion extension.
     |
     */
-    
+
     /**
      * Shows the events page.
      *
@@ -43,12 +45,12 @@ class EventController extends Controller
         $query = EventCategory::query();
         $name = $request->get('name');
         if($name) $query->where('name', 'LIKE', '%'.$name.'%');
-        return view('worldexpansion.event_categories', [  
+        return view('worldexpansion.event_categories', [
             'categories' => $query->orderBy('sort', 'DESC')->paginate(20)->appends($request->query())
 
         ]);
     }
-    
+
     /**
      * Shows the locations page.
      *
@@ -64,7 +66,7 @@ class EventController extends Controller
             'category' => $category
         ]);
     }
-    
+
     /**
      * Shows the locations page.
      *
@@ -75,12 +77,12 @@ class EventController extends Controller
     {
         $query = Event::with('category');
         $data = $request->only(['category_id', 'name', 'sort']);
-        if(isset($data['category_id']) && $data['category_id'] != 'none') 
+        if(isset($data['category_id']) && $data['category_id'] != 'none')
             $query->where('category_id', $data['category_id']);
-        if(isset($data['name'])) 
+        if(isset($data['name']))
             $query->where('name', 'LIKE', '%'.$data['name'].'%');
 
-        if(isset($data['sort'])) 
+        if(isset($data['sort']))
         {
             switch($data['sort']) {
                 case 'alpha':
@@ -99,7 +101,7 @@ class EventController extends Controller
                     $query->sortOldest();
                     break;
             }
-        } 
+        }
         else $query->sortCategory();
 
         return view('worldexpansion.events', [
@@ -107,7 +109,7 @@ class EventController extends Controller
             'categories' => ['none' => 'Any Category'] + EventCategory::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray()
         ]);
     }
-    
+
     /**
      * Shows the locations page.
      *
@@ -123,11 +125,12 @@ class EventController extends Controller
             'event' => $event,
             'figure_categories'  => FigureCategory::where('is_active',1)->get(),
             'location_types'  => LocationType::where('is_active',1)->get(),
+            'faction_types'  => FactionType::where('is_active',1)->get(),
             'event_categories'  => EventCategory::where('is_active',1)->get(),
             'prompt_categories'  => PromptCategory::get(),
         ]);
     }
-    
-    
+
+
 
 }

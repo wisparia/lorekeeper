@@ -22,9 +22,9 @@ class Figure extends Model
      * @var array
      */
     protected $fillable = [
-        'name','description', 'summary', 'parsed_description', 'sort', 'image_extension', 'thumb_extension', 
-        'category_id', 'is_active', 'birth_date', 'death_date'
-        
+        'name','description', 'summary', 'parsed_description', 'sort', 'image_extension', 'thumb_extension',
+        'category_id', 'is_active', 'birth_date', 'death_date', 'faction_id'
+
     ];
 
 
@@ -35,9 +35,9 @@ class Figure extends Model
      */
     protected $table = 'figures';
     protected $dates = ['birth_date', 'death_date'];
-    
+
     public $timestamps = true;
-    
+
     /**
      * Validation rules for creation.
      *
@@ -68,7 +68,7 @@ class Figure extends Model
 
 
     /**********************************************************************************************
-    
+
         RELATIONS
 
     **********************************************************************************************/
@@ -76,15 +76,23 @@ class Figure extends Model
     /**
      * Get the figure attached to this figure.
      */
-    public function category() 
+    public function category()
     {
         return $this->belongsTo('App\Models\WorldExpansion\FigureCategory', 'category_id');
     }
 
     /**
+     * Get the figure attached to this figure.
+     */
+    public function faction()
+    {
+        return $this->belongsTo('App\Models\WorldExpansion\Faction', 'faction_id');
+    }
+
+    /**
      * Get the items attached to this figure.
      */
-    public function items() 
+    public function items()
     {
         return $this->belongsToMany('App\Models\Item\Item', 'figure_items')->withPivot('id');
     }
@@ -93,13 +101,21 @@ class Figure extends Model
     /**
      * Get the items attached to this figure.
      */
-    public function events() 
+    public function events()
     {
         return $this->belongsToMany('App\Models\WorldExpansion\Event', 'event_figures')->withPivot('id');
     }
 
+    /**
+     * Get the factions attached to this figure.
+     */
+    public function factions()
+    {
+        return $this->belongsToMany('App\Models\WorldExpansion\Faction', 'faction_figures')->withPivot('id');
+    }
+
     /**********************************************************************************************
-    
+
         ACCESSORS
 
     **********************************************************************************************/
@@ -157,8 +173,8 @@ class Figure extends Model
     {
         return public_path($this->imageDirectory);
     }
-    
-    
+
+
 
     /**
      * Gets the file name of the model's image.
@@ -169,7 +185,7 @@ class Figure extends Model
     {
         return $this->id . '-image.' . $this->image_extension;
     }
-    
+
 
     /**
      * Gets the file name of the model's thumbnail image.
@@ -191,7 +207,7 @@ class Figure extends Model
         if (!$this->image_extension) return null;
         return asset($this->imageDirectory . '/' . $this->imageFileName);
     }
-    
+
     /**
      * Gets the URL of the model's thumbnail image.
      *
@@ -213,15 +229,15 @@ class Figure extends Model
         return url('world/figures/'.$this->id);
     }
 
-    
+
 
     /**********************************************************************************************
-    
+
         SCOPES
 
     **********************************************************************************************/
 
-    
+
 
     /**
      * Scope a query to sort items in category order.

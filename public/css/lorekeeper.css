@@ -1,6 +1,6 @@
 /**************************************************************************************************
-    
-    Font definitions 
+
+    Font definitions
 
 **************************************************************************************************/
 
@@ -14,15 +14,15 @@
 }
 
 /**************************************************************************************************
-    
+
     Base styles
-    
+
 **************************************************************************************************/
 
 h1, h2, h3, h4, h5,
 .h1, .h2, .h3, .h4, .h5 {
     text-transform: uppercase;
-    font-family: Roboto Condensed, serif; 
+    font-family: Roboto Condensed, serif;
     font-weight: bold;
 }
 
@@ -46,25 +46,30 @@ a:hover {
 
 body {
     background-color: transparent;
-    font-family: Lato, sans-serif; 
+    font-family: Lato, sans-serif;
     min-height: 100vh;
     font-size: 80%;
 }
 
 /**************************************************************************************************
-    
+
     Helpers
-    
+
 **************************************************************************************************/
 
 .hide {
     display: none !important;
 }
 
+.parsed-text img {
+    max-width: 100% !important;
+    height: auto !important;
+}
+
 /**************************************************************************************************
-    
+
     Layout
-    
+
 **************************************************************************************************/
 
 #app {
@@ -100,7 +105,7 @@ main > .row {
 
 .navbar .navbar-brand, .navbar .nav-item {
     text-transform: uppercase;
-    font-family: Roboto Condensed, serif; 
+    font-family: Roboto Condensed, serif;
 }
 
 .navbar .row { width: 100%; }
@@ -124,14 +129,14 @@ main > .row {
     border-bottom-left-radius: .25rem;
     margin-bottom: 1em;
     padding: 0.4em 0;
-    
+
     box-shadow: 0px 0px 6px 3px rgba(0,0,0,0.1);
 }
 
 .sidebar .sidebar-header,
 .sidebar .sidebar-section .sidebar-section-header {
     text-transform: uppercase;
-    font-family: Roboto Condensed, serif; 
+    font-family: Roboto Condensed, serif;
     font-weight: bold;
 }
 
@@ -181,7 +186,7 @@ main > .row {
 	.site-mobile-header {
 		top: 54px !important;
     }
-    
+
     .timestamp {
 		margin-left: 1rem!important;
 		margin-right: 1rem!important;
@@ -229,7 +234,7 @@ main > .row {
     }
     .sidebar.active {
         left: 0%;
-    } 
+    }
 
     .sidebar > ul {
         padding-top: 0px;
@@ -247,19 +252,19 @@ main > .row {
         border-radius: 0;
         margin-bottom: 1em;
         padding: 0.4em 0;
-        
+
         box-shadow: none;
     }
-	
+
 	/*fix for screen being over-wide on mobile*/
 	.row {
 		margin:0; max-width:100%;
 	}
-    
+
 	.container-fluid {
 		padding:0px;
 	}
-    
+
 	.site-footer .navbar .navbar-nav {
 		flex-wrap: wrap; justify-content: center;
 	}
@@ -292,9 +297,9 @@ main > .row {
 }
 
 /**************************************************************************************************
-    
+
     Content
-    
+
 **************************************************************************************************/
 .modal-header {
     border-bottom: 0px;
@@ -304,7 +309,7 @@ main > .row {
 }
 
 .tooltip-inner {
-    max-width: 350px !important; 
+    max-width: 350px !important;
 }
 
 .nav-tabs .nav-link.active {
@@ -389,6 +394,10 @@ main > .row {
 .text-break {
     overflow-wrap: break-word;
     word-break: break-word;
+}
+.small-icon {
+    height: 2rem;
+    padding-right: .5rem;
 }
 
 /* NOTIFICATIONS *********************************************************************************/
@@ -477,6 +486,10 @@ tr.outflow {
     color: inherit;
     text-decoration: none;
 }
+tr.accountbound {
+    background-color: rgba(0,0,0,0.05);
+    border-radius: .25rem;
+}
 
 /* CHARACTERS ************************************************************************************/
 
@@ -545,6 +558,9 @@ tr.outflow {
     background-color: rgba(0,0,0,0.05);
     border-radius: .25rem;
 }
+.user-items .category-selected.select-item-row {
+    background-color: rgba(0,0,0,0.05);
+}
 
 /* SHOPS *****************************************************************************************/
 .shops-row img {
@@ -588,4 +604,33 @@ tr.outflow {
 
 @media (min-width: 768px) {
     .fb-md-50 { flex-basis:50%; }
+}
+
+/* BOOTSTRAP TABLES *************************************************************************************/
+.ubt-bottom {
+  border-bottom:1px solid #dee2e6;
+}
+
+.ubt-top {
+  border-top:1px solid #dee2e6;
+}
+
+.ubt-texthide {
+  width:100%;
+  max-width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* COMMENTS *************************************************************************************/
+.comment_replies {
+        padding-left: 3rem;
+        border-left-width: 2px!important;
+    }
+
+@media only screen and (max-width: 600px) {
+    .comment_replies { padding-left:1rem;}
 }

@@ -13,14 +13,25 @@ use App\Models\Character\Character;
 use App\Models\Species\Species;
 use App\Models\Rarity;
 use App\Models\WorldExpansion\Location;
+use App\Models\WorldExpansion\Faction;
 use App\Models\Feature\Feature;
+
 use App\Models\Currency\Currency;
 use App\Models\Currency\CurrencyLog;
 use App\Models\User\UserCurrency;
+use App\Models\Gallery\GallerySubmission;
 use App\Models\Character\CharacterCurrency;
+
+use App\Models\Item\Item;
+use App\Models\Item\ItemCategory;
+use App\Models\User\UserItem;
+use App\Models\Character\CharacterItem;
+use App\Models\Item\ItemLog;
+
 use App\Models\Character\CharacterTransfer;
 
 use App\Services\CurrencyManager;
+use App\Services\InventoryManager;
 use App\Services\CharacterManager;
 
 use App\Http\Controllers\Controller;
@@ -90,7 +101,7 @@ class CharacterController extends Controller
     public function getEditCharacterProfile($slug)
     {
         if(!Auth::check()) abort(404);
-        
+
         $isMod = Auth::user()->hasPower('manage_characters');
         $isOwner = ($this->character->user_id == Auth::user()->id);
         if(!$isMod && !$isOwner) abort(404);
@@ -98,11 +109,14 @@ class CharacterController extends Controller
         return view('character.edit_profile', [
             'character' => $this->character,
             'locations' => Location::all()->where('is_character_home')->pluck('style','id')->toArray(),
+            'factions' => Faction::all()->where('is_character_faction')->pluck('style','id')->toArray(),
             'user_enabled' => Settings::get('WE_user_locations'),
-            'char_enabled' => Settings::get('WE_character_locations')
+            'user_faction_enabled' => Settings::get('WE_user_factions'),
+            'char_enabled' => Settings::get('WE_character_locations'),
+            'char_faction_enabled' => Settings::get('WE_character_factions')
         ]);
     }
-    
+
     /**
      * Edits a character's profile.
      *
@@ -118,14 +132,28 @@ class CharacterController extends Controller
         $isMod = Auth::user()->hasPower('manage_characters');
         $isOwner = ($this->character->user_id == Auth::user()->id);
         if(!$isMod && !$isOwner) abort(404);
-        
-        if($service->updateCharacterProfile($request->only(['name', 'text', 'is_gift_art_allowed', 'is_trading', 'alert_user','location']), $this->character, Auth::user(), !$isOwner)) {
+
+        if($service->updateCharacterProfile($request->only(['name', 'link', 'text', 'is_gift_art_allowed', 'is_gift_writing_allowed', 'is_trading', 'alert_user','location', 'faction']), $this->character, Auth::user(), !$isOwner)) {
             flash('Profile edited successfully.')->success();
         }
         else {
             foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
         }
         return redirect()->back();
+    }
+
+    /**
+     * Shows a character's gallery.
+     *
+     * @param  string  $slug
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getCharacterGallery($slug)
+    {
+        return view('character.gallery', [
+            'character' => $this->character,
+            'submissions' => GallerySubmission::whereIn('id', $this->character->gallerySubmissions->pluck('gallery_submission_id')->toArray())->visible()->accepted()->orderBy('created_at', 'DESC')->paginate(20),
+        ]);
     }
 
     /**
@@ -140,6 +168,43 @@ class CharacterController extends Controller
             'user' => Auth::check() ? Auth::user() : null,
             'character' => $this->character,
         ]);
+    }
+
+    /**
+     * Shows a character's inventory.
+     *
+     * @param  string  $slug
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getCharacterInventory($slug)
+    {
+        $categories = ItemCategory::where('is_character_owned', '1')->orderBy('sort', 'DESC')->get();
+        $itemOptions = Item::whereIn('item_category_id', $categories->pluck('id'));
+
+        $items = count($categories) ?
+            $this->character->items()
+                ->where('count', '>', 0)
+                ->orderByRaw('FIELD(item_category_id,'.implode(',', $categories->pluck('id')->toArray()).')')
+                ->orderBy('name')
+                ->orderBy('updated_at')
+                ->get()
+                ->groupBy(['item_category_id', 'id']) :
+            $this->character->items()
+                ->where('count', '>', 0)
+                ->orderBy('name')
+                ->orderBy('updated_at')
+                ->get()
+                ->groupBy(['item_category_id', 'id']);
+        return view('character.inventory', [
+            'character' => $this->character,
+            'categories' => $categories->keyBy('id'),
+            'items' => $items,
+            'logs' => $this->character->getItemLogs(),
+            ] + (Auth::check() && (Auth::user()->hasPower('edit_inventories') || Auth::user()->id == $this->character->user_id) ? [
+                'itemOptions' => $itemOptions->pluck('name', 'id'),
+                'userInventory' => UserItem::with('item')->whereIn('item_id', $itemOptions->pluck('id'))->whereNull('deleted_at')->where('count', '>', '0')->where('user_id', Auth::user()->id)->get()->filter(function($userItem){return $userItem->isTransferrable == true;})->sortBy('item.name'),
+                'page' => 'character'
+            ] : []));
     }
 
     /**
@@ -163,7 +228,7 @@ class CharacterController extends Controller
             'currencyOptions' => Currency::where('is_character_owned', 1)->orderBy('sort_character', 'DESC')->pluck('name', 'id')->toArray(),
         ] : []));
     }
-    
+
     /**
      * Transfers currency between the user and character.
      *
@@ -190,6 +255,100 @@ class CharacterController extends Controller
     }
 
     /**
+     * Handles inventory item processing, including transferring items between the user and character.
+     *
+     * @param  \Illuminate\Http\Request       $request
+     * @param  App\Services\CharacterManager  $service
+     * @param  string                         $slug
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postInventoryEdit(Request $request, InventoryManager $service, $slug)
+    {
+        if(!Auth::check()) abort(404);
+        switch($request->get('action')) {
+            default:
+                flash('Invalid action selected.')->error();
+                break;
+            case 'give':
+                $sender = Auth::user();
+                $recipient = $this->character;
+
+                if($service->transferCharacterStack($sender, $recipient, UserItem::find($request->get('stack_id')), $request->get('stack_quantity'))) {
+                    flash('Item transferred successfully.')->success();
+                }
+                else {
+                    foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
+                }
+                break;
+            case 'name':
+                return $this->postName($request, $service);
+                break;
+            case 'delete':
+                return $this->postDelete($request, $service);
+                break;
+            case 'take':
+                return $this->postItemTransfer($request, $service);
+                break;
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Transfers inventory items back to a user.
+     *
+     * @param  \Illuminate\Http\Request       $request
+     * @param  App\Services\InventoryManager  $service
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    private function postItemTransfer(Request $request, InventoryManager $service)
+    {
+        if($service->transferCharacterStack($this->character, $this->character->user, CharacterItem::find($request->get('ids')), $request->get('quantities'))) {
+            flash('Item transferred successfully.')->success();
+        }
+        else {
+            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
+        }
+        return redirect()->back();
+    }
+
+    /**
+     * Names an inventory stack.
+     *
+     * @param  \Illuminate\Http\Request       $request
+     * @param  App\Services\CharacterManager  $service
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    private function postName(Request $request, InventoryManager $service)
+    {
+        if($service->nameStack($this->character, CharacterItem::find($request->get('ids')), $request->get('stack_name'))) {
+            flash('Item named successfully.')->success();
+        }
+        else {
+            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
+        }
+        return redirect()->back();
+    }
+
+    /**
+     * Deletes an inventory stack.
+     *
+     * @param  \Illuminate\Http\Request       $request
+     * @param  App\Services\CharacterManager  $service
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    private function postDelete(Request $request, InventoryManager $service)
+    {
+        if($service->deleteStack($this->character, CharacterItem::find($request->get('ids')), $request->get('quantities'))) {
+            flash('Item deleted successfully.')->success();
+        }
+        else {
+            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
+        }
+        return redirect()->back();
+    }
+
+    /**
      * Shows a character's currency logs.
      *
      * @param  string  $slug
@@ -202,7 +361,21 @@ class CharacterController extends Controller
             'logs' => $this->character->getCurrencyLogs(0)
         ]);
     }
-    
+
+    /**
+     * Shows a character's item logs.
+     *
+     * @param  string  $name
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getCharacterItemLogs($slug)
+    {
+        return view('character.item_logs', [
+            'character' => $this->character,
+            'logs' => $this->character->getItemLogs(0)
+        ]);
+    }
+
     /**
      * Shows a character's ownership logs.
      *
@@ -216,7 +389,7 @@ class CharacterController extends Controller
             'logs' => $this->character->getOwnershipLogs(0)
         ]);
     }
-    
+
     /**
      * Shows a character's ownership logs.
      *
@@ -253,7 +426,7 @@ class CharacterController extends Controller
     public function getTransfer($slug)
     {
         if(!Auth::check()) abort(404);
-        
+
         $isMod = Auth::user()->hasPower('manage_characters');
         $isOwner = ($this->character->user_id == Auth::user()->id);
         if(!$isMod && !$isOwner) abort(404);
@@ -266,7 +439,7 @@ class CharacterController extends Controller
             'userOptions' => User::visible()->orderBy('name')->pluck('name', 'id')->toArray(),
         ]);
     }
-    
+
     /**
      * Opens a transfer request for a character.
      *
@@ -278,8 +451,8 @@ class CharacterController extends Controller
     public function postTransfer(Request $request, CharacterManager $service, $slug)
     {
         if(!Auth::check()) abort(404);
-        
-        if($service->createTransfer($request->only(['recipient_id']), $this->character, Auth::user())) {
+
+        if($service->createTransfer($request->only(['recipient_id', 'user_reason']), $this->character, Auth::user())) {
             flash('Transfer created successfully.')->success();
         }
         else {
@@ -287,7 +460,7 @@ class CharacterController extends Controller
         }
         return redirect()->back();
     }
-    
+
     /**
      * Cancels a transfer request for a character.
      *
@@ -300,7 +473,7 @@ class CharacterController extends Controller
     public function postCancelTransfer(Request $request, CharacterManager $service, $slug, $id)
     {
         if(!Auth::check()) abort(404);
-        
+
         if($service->cancelTransfer(['transfer_id' => $id], Auth::user())) {
             flash('Transfer cancelled.')->success();
         }
@@ -309,7 +482,7 @@ class CharacterController extends Controller
         }
         return redirect()->back();
     }
-    
+
     /**
      * Shows a character's design update approval page.
      *

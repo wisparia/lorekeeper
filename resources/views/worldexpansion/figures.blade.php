@@ -23,7 +23,7 @@
                     'alpha-reverse'  => 'Sort Alphabetically (Z-A)',
                     'category'          => 'Sort by Category',
                     'newest'         => 'Newest First',
-                    'oldest'         => 'Oldest First'    
+                    'oldest'         => 'Oldest First'
                 ], Request::get('sort') ? : 'category', ['class' => 'form-control']) !!}
             </div>
             <div class="form-group ml-3 mb-3">
@@ -38,13 +38,13 @@
     @foreach($figures as $figure)
         <div class="col-12 col-md-4 mb-3"><div class="card mb-3 p-3 h-100">
             <div class="world-entry-image">
-            @isset($figure->thumb_extension) 
+            @isset($figure->thumb_extension)
                 <a href="{{ $figure->thumbUrl }}" data-lightbox="entry" data-title="{{ $figure->name }}"><img src="{{ $figure->thumbUrl }}" class="world-entry-image mb-3 mw-100" /></a>
             @endisset
             </div>
             <h3 class="mb-0 text-center">{!! $figure->displayName !!}</h3>
-            <p class="mb-0 text-center">{!! $figure->category ? $figure->category->displayName : '' !!}</p>
-            
+            <p class="mb-0 text-center">{!! $figure->category ? $figure->category->displayName : '' !!}{!! $figure->faction ? ' ・ '.ucfirst($figure->faction->displayName) : '' !!}</p>
+
             @if(count($figure->items))
                 <p class="text-center mb-0">Associated with {{ count($figure->items) }} item{{ count($figure->items) == 1 ? '' : 's' }}.</p>
             @endif

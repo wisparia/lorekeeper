@@ -104,7 +104,19 @@
         </div>
         <div class="col-12 text-right"><a href="#" class="btn btn-primary" id="add-location">Add Location</a></div>
     </div>
-    
+
+    <h3>Associated Factions</h3>
+    <div class="form-group row">
+        <div id="factionList" class="col-12 row">
+            @foreach($event->factions as $faction)
+                <div class="d-flex mb-2 col-4">
+                    {!! Form::select('faction_id['.$faction->id.']', $factions, $faction->id, ['class' => 'form-control mr-2 faction-select original', 'placeholder' => 'Select Faction']) !!}
+                    <a href="#" class="remove-faction btn btn-danger mb-2">×</a>
+                </div>
+            @endforeach
+        </div>
+        <div class="col-12 text-right"><a href="#" class="btn btn-primary" id="add-faction">Add Faction</a></div>
+    </div>
 
     <h3>Associated News Posts</h3>
     <div class="form-group row">
@@ -154,6 +166,11 @@
 <div class="location-row hide mb-2 col-4">
     {!! Form::select('location_id[]', $locations, null, ['class' => 'form-control mr-2 location-select', 'placeholder' => 'Select Location']) !!}
     <a href="#" class="remove-location btn btn-danger mb-2">×</a>
+</div>
+
+<div class="faction-row hide mb-2 col-4">
+    {!! Form::select('faction_id[]', $factions, null, ['class' => 'form-control mr-2 faction-select', 'placeholder' => 'Select Faction']) !!}
+    <a href="#" class="remove-faction btn btn-danger mb-2">×</a>
 </div>
 
 <div class="news-row hide mb-2 col-4">
@@ -226,7 +243,32 @@ $( document ).ready(function() {
         $trigger.parent().remove();
     }
 
-    
+
+    $('.original.faction-select').selectize();
+    $('#add-faction').on('click', function(e) {
+        e.preventDefault();
+        addFactionRow();
+    });
+    $('.remove-faction').on('click', function(e) {
+        e.preventDefault();
+        removeFigureRow($(this));
+    })
+    function addFactionRow() {
+        var $clone = $('.faction-row').clone();
+        $('#factionList').append($clone);
+        $clone.removeClass('hide faction-row');
+        $clone.addClass('d-flex');
+        $clone.find('.remove-faction').on('click', function(e) {
+            e.preventDefault();
+            removeFactionRow($(this));
+        })
+        $clone.find('.faction-select').selectize();
+    }
+    function removeFactionRow($trigger) {
+        $trigger.parent().remove();
+    }
+
+
     $('.original.news-select').selectize();
     $('#add-news').on('click', function(e) {
         e.preventDefault();
@@ -251,7 +293,7 @@ $( document ).ready(function() {
         $trigger.parent().remove();
     }
 
-    
+
     $('.original.prompt-select').selectize();
     $('#add-prompt').on('click', function(e) {
         e.preventDefault();
@@ -275,12 +317,12 @@ $( document ).ready(function() {
     function removePromptRow($trigger) {
         $trigger.parent().remove();
     }
-    
+
     $( ".datepicker" ).datetimepicker({
         dateFormat: "yy-mm-dd",
         timeFormat: '',
     });
 });
-    
+
 </script>
 @endsection

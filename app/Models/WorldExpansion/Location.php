@@ -22,9 +22,9 @@ class Location extends Model
      * @var array
      */
     protected $fillable = [
-        'name','description', 'summary', 'parsed_description', 'sort', 'image_extension', 'thumb_extension', 
+        'name','description', 'summary', 'parsed_description', 'sort', 'image_extension', 'thumb_extension',
         'parent_id', 'type_id', 'is_active', 'display_style', 'is_character_home', 'is_user_home',
-        
+
     ];
 
 
@@ -34,9 +34,9 @@ class Location extends Model
      * @var string
      */
     protected $table = 'locations';
-    
+
     public $timestamps = true;
-    
+
     /**
      * Validation rules for creation.
      *
@@ -65,7 +65,7 @@ class Location extends Model
 
 
     /**********************************************************************************************
-    
+
         RELATIONS
 
     **********************************************************************************************/
@@ -73,7 +73,7 @@ class Location extends Model
     /**
      * Get the location attached to this location.
      */
-    public function type() 
+    public function type()
     {
         return $this->belongsTo('App\Models\WorldExpansion\LocationType', 'type_id');
     }
@@ -81,7 +81,7 @@ class Location extends Model
     /**
      * Get the location attached to this location.
      */
-    public function parent() 
+    public function parent()
     {
         return $this->belongsTo('App\Models\WorldExpansion\Location', 'parent_id');
     }
@@ -89,7 +89,7 @@ class Location extends Model
     /**
      * Get the location attached to this location.
      */
-    public function children() 
+    public function children()
     {
         return $this->hasMany('App\Models\WorldExpansion\Location', 'parent_id');
     }
@@ -97,31 +97,39 @@ class Location extends Model
     /**
      * Get the locations attached to this fauna.
      */
-    public function fauna() 
+    public function fauna()
     {
         return $this->belongsToMany('App\Models\WorldExpansion\Fauna', 'fauna_locations')->withPivot('id');
     }
-    
+
     /**
      * Get the locations attached to this flora.
      */
-    public function flora() 
+    public function flora()
     {
         return $this->belongsToMany('App\Models\WorldExpansion\Flora', 'flora_locations')->withPivot('id');
     }
-    
-    
+
+
     /**
      * Get the locations attached to this flora.
      */
-    public function events() 
+    public function events()
     {
         return $this->belongsToMany('App\Models\WorldExpansion\Event', 'event_locations')->withPivot('id');
     }
-    
+
+    /**
+     * Get the factions attached to this location.
+     */
+    public function factions()
+    {
+        return $this->belongsToMany('App\Models\WorldExpansion\Faction', 'faction_locations')->withPivot('id');
+    }
+
 
     /**********************************************************************************************
-    
+
         ACCESSORS
 
     **********************************************************************************************/
@@ -179,8 +187,8 @@ class Location extends Model
     {
         return public_path($this->imageDirectory);
     }
-    
-    
+
+
 
     /**
      * Gets the file name of the model's image.
@@ -191,7 +199,7 @@ class Location extends Model
     {
         return $this->id . '-image.' . $this->image_extension;
     }
-    
+
 
     /**
      * Gets the file name of the model's thumbnail image.
@@ -213,7 +221,7 @@ class Location extends Model
         if (!$this->image_extension) return null;
         return asset($this->imageDirectory . '/' . $this->imageFileName);
     }
-    
+
     /**
      * Gets the URL of the model's thumbnail image.
      *
@@ -260,15 +268,15 @@ class Location extends Model
     {
         return $this->displayStyles[$this->display_style];
     }
-    
+
 
     /**********************************************************************************************
-    
+
         SCOPES
 
     **********************************************************************************************/
 
-    
+
 
     /**
      * Scope a query to sort items in category order.

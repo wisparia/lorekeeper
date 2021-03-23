@@ -23,7 +23,7 @@
                     'alpha-reverse'  => 'Sort Alphabetically (Z-A)',
                     'category'          => 'Sort by Category',
                     'newest'         => 'Newest First',
-                    'oldest'         => 'Oldest First'    
+                    'oldest'         => 'Oldest First'
                 ], Request::get('sort') ? : 'category', ['class' => 'form-control']) !!}
             </div>
             <div class="form-group ml-3 mb-3">
@@ -38,15 +38,18 @@
     @foreach($events as $event)
         <div class="col-12 col-md-4 mb-3"><div class="card mb-3 p-3 h-100">
             <div class="world-entry-image">
-            @isset($event->thumb_extension) 
+            @isset($event->thumb_extension)
                 <a href="{{ $event->thumbUrl }}" data-lightbox="entry" data-title="{{ $event->name }}"><img src="{{ $event->thumbUrl }}" class="world-entry-image mb-3 mw-100" /></a>
             @endisset
             </div>
             <h3 class="mb-0 text-center">{!! $event->displayName !!}</h3>
             <p class="mb-0 text-center">{!! $event->category ? $event->category->displayName : '' !!}</p>
-            
+
             @if(count($event->locations))
                 <p class="text-center mb-0">Associated with {{ count($event->locations) }} location{{ count($event->locations) == 1 ? '' : 's' }}.</p>
+            @endif
+            @if(count($event->factions))
+                <p class="text-center mb-0">Associated with {{ count($event->factions) }} faction{{ count($event->factions) == 1 ? '' : 's' }}.</p>
             @endif
             @if(count($event->figures))
                 <p class="text-center mb-0">Associated with {{ count($event->figures) }} figure{{ count($event->figures) == 1 ? '' : 's' }}.</p>

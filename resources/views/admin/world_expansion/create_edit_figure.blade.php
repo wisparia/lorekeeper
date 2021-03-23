@@ -23,7 +23,7 @@
     </div>
     <div class="form-group col-md px-0 pr-md-1">
         {!! Form::label('Category') !!} {!! add_help('What type of figure is this?') !!}
-        {!! Form::select('category_id', [0=>'Choose an Figure Category'] + $categories, $figure->category_id, ['class' => 'form-control selectize', 'id' => 'category']) !!}
+        {!! Form::select('category_id', [0=>'Choose a Figure Category'] + $categories, $figure->category_id, ['class' => 'form-control selectize', 'id' => 'category']) !!}
     </div>
 </div>
 
@@ -41,6 +41,11 @@
         {!! Form::label('death_date', 'Death Date (Optional)') !!}
         {!! Form::text('death_date', $figure->death_date, ['class' => 'form-control datepicker']) !!}
     </div>
+</div>
+
+<div class="form-group">
+    {!! Form::label('Faction (Optional)') !!} {!! add_help('This will set the figure as a member of this faction. To associate this figure with a faction without being a part of it, edit the faction instead.') !!}
+    {!! Form::select('faction_id', [0 => 'Choose a Faction'] + $factions, $figure->faction_id, ['class' => 'form-control selectize', 'id' => 'category']) !!}
 </div>
 
 <h3>Images</h3>
@@ -148,12 +153,12 @@ $( document ).ready(function() {
         $trigger.parent().remove();
     }
 
-    
+
     $( ".datepicker" ).datetimepicker({
         dateFormat: "yy-mm-dd",
         timeFormat: '',
     });
 });
-    
+
 </script>
 @endsection

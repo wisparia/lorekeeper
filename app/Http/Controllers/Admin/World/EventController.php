@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\World;
 
 use App\Models\WorldExpansion\Location;
+use App\Models\WorldExpansion\Faction;
 use App\Models\WorldExpansion\Figure;
 use App\Models\Item\Item;
 use App\Models\Prompt\Prompt;
@@ -184,6 +185,7 @@ class EventController extends Controller
             'events' => Event::all()->pluck('name','id')->toArray(),
             'figures' => Figure::all()->pluck('name','id')->toArray(),
             'locations' => Location::all()->pluck('name','id')->toArray(),
+            'factions' => Faction::all()->pluck('name','id')->toArray(),
             'newses' => News::all()->pluck('title','id')->toArray(),
             'prompts' => Prompt::all()->pluck('name','id')->toArray(),
         ]);
@@ -205,6 +207,7 @@ class EventController extends Controller
             'events' => Event::all()->where('id','!=',$event->id)->pluck('name','id')->toArray(),
             'figures' => Figure::all()->pluck('name','id')->toArray(),
             'locations' => Location::all()->pluck('name','id')->toArray(),
+            'factions' => Faction::all()->pluck('name','id')->toArray(),
             'newses' => News::all()->pluck('title','id')->toArray(),
             'prompts' => Prompt::all()->pluck('name','id')->toArray(),
         ]);
@@ -224,7 +227,7 @@ class EventController extends Controller
 
         $data = $request->only([
             'name', 'description', 'image', 'image_th', 'remove_image', 'remove_image_th',
-            'is_active', 'summary', 'category_id', 'figure_id', 'location_id', 'news_id', 'prompt_id',
+            'is_active', 'summary', 'category_id', 'figure_id', 'location_id', 'faction_id', 'news_id', 'prompt_id',
             'occur_start', 'occur_end'
         ]);
         if($id && $service->updateEvent(Event::find($id), $data, Auth::user())) {

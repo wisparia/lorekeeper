@@ -26,9 +26,9 @@ class Event extends Model
      * @var array
      */
     protected $fillable = [
-        'name','description', 'summary', 'parsed_description', 'sort', 'image_extension', 'thumb_extension', 
+        'name','description', 'summary', 'parsed_description', 'sort', 'image_extension', 'thumb_extension',
         'category_id', 'is_active', 'occur_start', 'occur_end'
-        
+
     ];
 
 
@@ -40,9 +40,9 @@ class Event extends Model
     protected $table = 'events';
 
     protected $dates = ['occur_start', 'occur_end'];
-    
+
     public $timestamps = true;
-    
+
     /**
      * Validation rules for creation.
      *
@@ -71,7 +71,7 @@ class Event extends Model
 
 
     /**********************************************************************************************
-    
+
         RELATIONS
 
     **********************************************************************************************/
@@ -79,7 +79,7 @@ class Event extends Model
     /**
      * Get the location attached to this location.
      */
-    public function category() 
+    public function category()
     {
         return $this->belongsTo('App\Models\WorldExpansion\EventCategory', 'category_id');
     }
@@ -87,7 +87,7 @@ class Event extends Model
     /**
      * Get the items attached to this event.
      */
-    public function figures() 
+    public function figures()
     {
         return $this->belongsToMany('App\Models\WorldExpansion\Figure', 'event_figures')->withPivot('id');
     }
@@ -95,7 +95,7 @@ class Event extends Model
     /**
      * Get the locations attached to this event.
      */
-    public function locations() 
+    public function locations()
     {
         return $this->belongsToMany('App\Models\WorldExpansion\Location', 'event_locations')->withPivot('id');
     }
@@ -103,7 +103,7 @@ class Event extends Model
     /**
      * Get the newses attached to this event.
      */
-    public function newses() 
+    public function newses()
     {
         return $this->belongsToMany('App\Models\News', 'event_newses')->withPivot('id');
     }
@@ -111,13 +111,21 @@ class Event extends Model
     /**
      * Get the prompts attached to this event.
      */
-    public function prompts() 
+    public function prompts()
     {
         return $this->belongsToMany('App\Models\Prompt\Prompt', 'event_prompts')->withPivot('id');
     }
 
+    /**
+     * Get the factions attached to this event.
+     */
+    public function factions()
+    {
+        return $this->belongsToMany('App\Models\WorldExpansion\Faction', 'event_factions')->withPivot('id');
+    }
+
     /**********************************************************************************************
-    
+
         ACCESSORS
 
     **********************************************************************************************/
@@ -175,7 +183,7 @@ class Event extends Model
     {
         return public_path($this->imageDirectory);
     }
-    
+
     /**
      * Gets the file name of the model's image.
      *
@@ -185,7 +193,7 @@ class Event extends Model
     {
         return $this->id . '-image.' . $this->image_extension;
     }
-    
+
 
     /**
      * Gets the file name of the model's thumbnail image.
@@ -207,7 +215,7 @@ class Event extends Model
         if (!$this->image_extension) return null;
         return asset($this->imageDirectory . '/' . $this->imageFileName);
     }
-    
+
     /**
      * Gets the URL of the model's thumbnail image.
      *
@@ -229,15 +237,15 @@ class Event extends Model
         return url('world/events/'.$this->id);
     }
 
-    
+
 
     /**********************************************************************************************
-    
+
         SCOPES
 
     **********************************************************************************************/
 
-    
+
 
     /**
      * Scope a query to sort items in category order.
