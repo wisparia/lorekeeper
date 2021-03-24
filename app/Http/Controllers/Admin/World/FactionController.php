@@ -172,6 +172,8 @@ class FactionController extends Controller
             'faction' => new Faction,
             'types' => FactionType::all()->pluck('name','id')->toArray(),
             'factions' => Faction::all()->pluck('name','id')->toArray(),
+            'locations' => Location::all()->pluck('name','id')->toArray(),
+            'figures' => Figure::all()->pluck('name','id')->toArray(),
             'ch_enabled' => Settings::get('WE_character_factions'),
             'user_enabled' => Settings::get('WE_user_factions')
         ]);
