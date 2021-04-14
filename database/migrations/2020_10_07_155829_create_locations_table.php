@@ -74,7 +74,7 @@ class CreateLocationsTable extends Migration
             $table->foreign('home_id')->references('id')->on('locations')->onDelete('set null');
             $table->dateTime('home_changed')->nullable()->default(null);
         });
-
+ a
     }
 
     /**

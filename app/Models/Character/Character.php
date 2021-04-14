@@ -44,7 +44,7 @@ class Character extends Model
         'is_sellable', 'is_tradeable', 'is_giftable',
         'sale_value', 'transferrable_at', 'is_visible',
         'is_gift_art_allowed', 'is_gift_writing_allowed', 'is_trading', 'sort',
-        'is_myo_slot', 'name', 'trade_id', 'owner_url', 'home_id', 'home_changed', 'faction_id', 'faction_changed'
+        'is_myo_slot', 'name', 'trade_id', 'owner_url', 'home_id', 'currentLocation_id', 'home_changed', 'faction_id', 'faction_changed'
     ];
 
     /**
@@ -191,6 +191,11 @@ class Character extends Model
     public function home()
     {
         return $this->belongsTo('App\Models\WorldExpansion\Location', 'home_id');
+    }
+
+    public function currentLocation()
+    {
+        return $this->belongsTo('App\Models\WorldExpansion\Location', 'currentLocation_id');
     }
 
     /**
@@ -382,6 +387,35 @@ class Character extends Model
     }
 
     public function getLocationAttribute()
+    {
+        $setting = $this->homeSetting;
+
+
+        switch($setting) {
+            case 1:
+                if(!$this->user) return null;
+                elseif(!$this->user->home) return null;
+                else return $this->user->home->fullDisplayName;
+
+            case 2:
+                if(!$this->home) return null;
+                else return $this->home->fullDisplayName;
+
+            case 3:
+                if(!$this->home) return null;
+                else return $this->home->fullDisplayName;
+
+            default:
+                return null;
+        }
+    }
+
+    public function getCurrentSettingAttribute()
+    {
+        return intval(Settings::get('WE_character_current_locations'));
+    }
+
+    public function getCurrentLocationAttribute()
     {
         $setting = $this->homeSetting;
 

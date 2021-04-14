@@ -54,9 +54,35 @@
         {!! Form::close() !!}
     @else
         <div class="alert alert-warning">
-        <strong>You can't change your location right now.</strong>
+        <strong>You can't change your home right now.</strong>
         You last changed it on {!! format_date(Auth::user()->home_changed, false) !!}.
         Home locations can be changed {{ $location_interval }}.
+        </div>
+    @endif
+@endif
+
+@if($user_enabled == 1 || (Auth::user()->isStaff && $user_enabled == 2))
+<h3>Current Location <span class="text-muted">({{ ucfirst($location_interval) }})</span></h3>
+    @if(Auth::user()->isStaff && $user_enabled == 2)
+        <div class="alert alert-warning">You can edit this because you are a staff member. Normal users cannot edit their own locations freely.</div>
+    @endif
+    @if(Auth::user()->canChangeLocation)
+        {!! Form::open(['url' => 'account/location']) !!}
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label">Location</label>
+                <div class="col-md-9">
+                {!! Form::select('location', [0=>'Choose a Location'] + $locations, isset(Auth::user()->currentLocation_id) ? Auth::user()->currentLocation_id : 0, ['class' => 'form-control selectize']) !!}
+                </div>
+                <div class="col-md text-right">
+                    {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
+                </div>
+            </div>
+        {!! Form::close() !!}
+    @else
+        <div class="alert alert-warning">
+        <strong>You can't change your location right now.</strong>
+        You last changed it on {!! format_date(Auth::user()->home_changed, false) !!}.
+        Current locations can be changed {{ $location_interval }}.
         </div>
     @endif
 @endif

@@ -91,13 +91,26 @@ class AddWorldExpansion extends Command
                 [
                     'key' => 'WE_character_locations',
                     'value' => 0,
-                    'description' => '0: Characters do not have locations. 1: Characters\' locations are the same as their owners. 2: Users can edit their own character locations. 3: Only admins can edit character locations.'
+                    'description' => '0: Characters do not have home locations. 1: Characters\' home locations are the same as their owners. 2: Users can edit their own character home locations. 3: Only admins can edit character home locations.'
                 ]
 
             ]);
             $this->info("Added:   WE_character_locations / Default: 0");
         }
         else $this->line("Skipped: WE_character_locations");
+
+        if(!DB::table('site_settings')->where('key', 'WE_character_current_locations')->exists()) {
+            DB::table('site_settings')->insert([
+                [
+                    'key' => 'WE_character_current_locations',
+                    'value' => 0,
+                    'description' => '0: Characters do not have current locations. 1: Characters\' current locations are the same as their owners. 2: Users can edit their own character current locations. 3: Only admins can edit character current locations.'
+                ]
+
+            ]);
+            $this->info("Added:   'WE_character_current_locations' / Default: 0");
+        }
+        else $this->line("Skipped: WE_character_current_locations");
 
         if(!DB::table('site_settings')->where('key', 'WE_character_factions')->exists()) {
             DB::table('site_settings')->insert([
