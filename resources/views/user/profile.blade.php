@@ -12,8 +12,8 @@
 @endif
 <h1>
 <img src="/images/avatars/{{ $user->avatar }}" style="width:125px; height:125px; float:left; border-radius:50%; margin-right:25px;">
-    {!! $user->displayName !!} 
-    
+    {!! $user->displayName !!}
+
     <small><small><a href="{{ url('reports/new?url=') . $user->url }}"><i class="fas fa-exclamation-triangle fa-xs" data-toggle="tooltip" title="Click here to report this user." style="opacity: 50%;"></i></a></small></small>
 
     @if($user->settings->is_fto)
@@ -33,6 +33,19 @@
         <div class="col-md-2 col-4"><h5>Joined</h5></div>
         <div class="col-md-10 col-8">{!! format_date($user->created_at, false) !!} ({{ $user->created_at->diffForHumans() }})</div>
     </div>
+
+    @if($user_enabled && isset($user->home_id))
+    <div class="row">
+        <div class="col-md-2 col-4"><h5>Home</h5></div>
+        <div class="col-md-10 col-8">{!! $user->home ? $user->home->fullDisplayName : '-Deleted Location-' !!}</div>
+    </div>
+    @endif
+    @if($user_enabled && isset($user->faction_id))
+    <div class="row">
+        <div class="col-md-2 col-4"><h5>Faction</h5></div>
+        <div class="col-md-10 col-8">{!! $user->faction ? $user->faction->fullDisplayName : '-Deleted Faction-' !!}</div>
+    </div>
+    @endif
 </div>
 
 <div class="card mb-3">
@@ -69,7 +82,7 @@
                             </div>
                         @endforeach
                     </div>
-                @else 
+                @else
                     <div>No items owned.</div>
                 @endif
             </div>
@@ -108,5 +121,5 @@
 
 @comments(['model' => $user->profile,
         'perPage' => 5
-    ])  
+    ])
 @endsection

@@ -3,6 +3,7 @@
 use App\Services\Service;
 
 use DB;
+use Settings;
 use Auth;
 use File;
 use Image;
@@ -11,6 +12,8 @@ use Carbon\Carbon;
 use App\Models\User\User;
 use App\Models\Rank\Rank;
 use App\Models\Character\CharacterTransfer;
+use App\Models\WorldExpansion\Location;
+use App\Models\WorldExpansion\Faction;
 use App\Models\Character\CharacterDesignUpdate;
 use App\Models\Submission\Submission;
 use App\Models\Gallery\GallerySubmission;
@@ -77,7 +80,68 @@ class UserService extends Service
     }
 
     /**
-     * Updates the user's password. 
+     * Updates a user. Used in modifying the admin user on the command line.
+     *
+     * @param  array  $data
+     * @return \App\Models\User\User
+     */
+    public function updateLocation($id, $user)
+    {
+        DB::beginTransaction();
+
+        try {
+            $location = Location::find($id);
+            if(!$location) throw new \Exception("Not a valid location.");
+            if(!$location->is_user_home) throw new \Exception("Not a location a user can have as their home.");
+
+            $limit = Settings::get('WE_change_timelimit');
+
+            if($user->canChangeLocation) {
+                $user->home_id = $id;
+                $user->save();
+            }
+            else throw new \Exception("You can't change your location yet!");
+
+            return $this->commitReturn(true);
+        } catch(\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Updates a user. Used in modifying the admin user on the command line.
+     *
+     * @param  array  $data
+     * @return \App\Models\User\User
+     */
+    public function updateFaction($id, $user)
+    {
+        DB::beginTransaction();
+
+        try {
+            $faction = Faction::find($id);
+            if(!$faction) throw new \Exception("Not a valid faction.");
+
+            if(!$faction->is_user_faction) throw new \Exception("Not a faction a user can join.");
+
+            $limit = Settings::get('WE_change_timelimit');
+
+            if($user->canChangeFaction) {
+                $user->faction_id = $id;
+                $user->save();
+            }
+            else throw new \Exception("You can't change your faction yet!");
+
+            return $this->commitReturn(true);
+        } catch(\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Updates the user's password.
      *
      * @param  array                  $data
      * @param  \App\Models\User\User  $user
@@ -96,14 +160,14 @@ class UserService extends Service
             $user->save();
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
     }
 
     /**
-     * Updates the user's email and resends a verification email. 
+     * Updates the user's email and resends a verification email.
      *
      * @param  array                  $data
      * @param  \App\Models\User\User  $user
@@ -121,7 +185,7 @@ class UserService extends Service
     }
 
     /**
-     * Updates the user's avatar. 
+     * Updates the user's avatar.
      *
      * @param  array                  $data
      * @param  \App\Models\User\User  $user
@@ -134,7 +198,7 @@ class UserService extends Service
         try {
             if(!$avatar) throw new \Exception ("Please upload a file.");
             $filename = $user->id . '.' . $avatar->getClientOriginalExtension();
-            
+
             if ($user->avatar !== 'default.jpg') {
                 $file = 'images/avatars/' . $user->avatar;
                 //$destinationPath = 'uploads/' . $id . '/';
@@ -146,15 +210,15 @@ class UserService extends Service
 
             // Checks if uploaded file is a GIF
             if ($avatar->getClientOriginalExtension() == 'gif') {
-            
+
                 if(!copy($avatar, $file)) throw new \Exception("Failed to copy file.");
-                if(!$file->move( public_path('images/avatars', $filename))) throw new \Exception("Failed to move file."); 
-                if(!$avatar->move( public_path('images/avatars', $filename))) throw new \Exception("Failed to move file."); 
-                
+                if(!$file->move( public_path('images/avatars', $filename))) throw new \Exception("Failed to move file.");
+                if(!$avatar->move( public_path('images/avatars', $filename))) throw new \Exception("Failed to move file.");
+
             }
 
             else {
-                if(!Image::make($avatar)->resize(150, 150)->save( public_path('images/avatars/' . $filename))) 
+                if(!Image::make($avatar)->resize(150, 150)->save( public_path('images/avatars/' . $filename)))
                 throw new \Exception("Failed to process avatar.");
             }
 
@@ -162,14 +226,14 @@ class UserService extends Service
             $user->save();
 
             return $this->commitReturn($avatar);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
     }
 
     /**
-     * Bans a user. 
+     * Bans a user.
      *
      * @param  array                  $data
      * @param  \App\Models\User\User  $user
@@ -242,14 +306,14 @@ class UserService extends Service
             $user->settings->save();
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
     }
 
     /**
-     * Unbans a user. 
+     * Unbans a user.
      *
      * @param  \App\Models\User\User  $user
      * @param  \App\Models\User\User  $staff
@@ -263,7 +327,7 @@ class UserService extends Service
             if($user->is_banned) {
                 $user->is_banned = 0;
                 $user->save();
-                
+
                 $user->settings->ban_reason = null;
                 $user->settings->banned_at = null;
                 $user->settings->save();
@@ -271,7 +335,7 @@ class UserService extends Service
             }
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) { 
+        } catch(\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
         return $this->rollbackReturn(false);
