@@ -373,6 +373,7 @@ class LocationService extends Service
         $saveData['image_th'] = isset($data['image_th']) ? $data['image_th'] : null;
 
         $saveData['is_character_home'] = isset($data['character_home']);
+        $saveData['is_character_current'] = isset($data['character_current']);
         $saveData['is_user_home'] = isset($data['user_home']);
 
         $saveData['display_style'] = isset($data['style']) ? $data['style'] : 0 ;

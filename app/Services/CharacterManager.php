@@ -1282,7 +1282,7 @@ class CharacterManager extends Service
             // Update the character's home
             if(isset($data['location']) && $data['location']) $character->home_id = $data['location'];
             // Update the character's location and/or faction
-            if(isset($data['location']) && $data['location']) $character->currentLocation_id = $data['location'];
+            if(isset($data['current_location']) && $data['current_location']) $character->current_location_id = $data['current_location'];
             // Update the character's location
             if(isset($data['faction']) && $data['faction']) $character->faction_id = $data['faction'];
             $character->save();

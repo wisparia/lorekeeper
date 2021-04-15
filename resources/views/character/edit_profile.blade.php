@@ -45,14 +45,14 @@
 </div>
 @endif
 
-@if($char_enabled == 2 || (Auth::user()->isStaff && $char_enabled == 3))
-@if(Auth::user()->isStaff && $char_enabled == 3)
+@if($char_setting == 2 || (Auth::user()->isStaff && $char_setting == 3))
+@if(Auth::user()->isStaff && $char_setting == 3)
     <div class="alert alert-warning">You can edit this because you are a staff member. Normal users cannot edit their character locations freely.</div>
 @endif
 <div class="form-group row">
     <label class="col-md-1 col-form-label">Current Location</label>
     <div class="col-md">
-    {!! Form::select('location', [0=>'Choose a Location'] + $locations, isset($character->currentLocation_id) ? $character->currentLocation_id : 0, ['class' => 'form-control selectize']) !!}
+    {!! Form::select('current_location', [0=>'Choose a Location'] + $locations, isset($character->current_location_id) ? $character->current_location_id : 0, ['class' => 'form-control selectize']) !!}
     </div>
 </div>
 @endif

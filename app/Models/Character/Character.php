@@ -44,7 +44,7 @@ class Character extends Model
         'is_sellable', 'is_tradeable', 'is_giftable',
         'sale_value', 'transferrable_at', 'is_visible',
         'is_gift_art_allowed', 'is_gift_writing_allowed', 'is_trading', 'sort',
-        'is_myo_slot', 'name', 'trade_id', 'owner_url', 'home_id', 'currentLocation_id', 'home_changed', 'faction_id', 'faction_changed'
+        'is_myo_slot', 'name', 'trade_id', 'owner_url', 'home_id', 'current_location_id', 'home_changed', 'faction_id', 'faction_changed'
     ];
 
     /**
@@ -193,9 +193,9 @@ class Character extends Model
         return $this->belongsTo('App\Models\WorldExpansion\Location', 'home_id');
     }
 
-    public function currentLocation()
+    public function current()
     {
-        return $this->belongsTo('App\Models\WorldExpansion\Location', 'currentLocation_id');
+        return $this->belongsTo('App\Models\WorldExpansion\Location', 'current_location_id');
     }
 
     /**
@@ -417,22 +417,17 @@ class Character extends Model
 
     public function getCurrentLocationAttribute()
     {
-        $setting = $this->homeSetting;
+        $setting = $this->currentSetting;
 
 
         switch($setting) {
             case 1:
-                if(!$this->user) return null;
-                elseif(!$this->user->home) return null;
-                else return $this->user->home->fullDisplayName;
+                if(!$this->currentLocation) return null;
+                else return $this->currentLocation->fullDisplayName;
 
             case 2:
-                if(!$this->home) return null;
-                else return $this->home->fullDisplayName;
-
-            case 3:
-                if(!$this->home) return null;
-                else return $this->home->fullDisplayName;
+                if(!$this->currentLocation) return null;
+                else return $this->currentLocation->fullDisplayName;
 
             default:
                 return null;

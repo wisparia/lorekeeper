@@ -109,12 +109,12 @@ class CharacterController extends Controller
         return view('character.edit_profile', [
             'character' => $this->character,
             'locations' => Location::all()->where('is_character_home')->pluck('style','id')->toArray(),
-            'locations' => Location::all()->where('is_character_current')->pluck('style','id')->toArray(),
+            'current_location' => Location::all()->where('is_character_current')->pluck('style','id')->toArray(),
             'factions' => Faction::all()->where('is_character_faction')->pluck('style','id')->toArray(),
             'user_enabled' => Settings::get('WE_user_locations'),
             'user_faction_enabled' => Settings::get('WE_user_factions'),
             'char_enabled' => Settings::get('WE_character_locations'),
-            'char_enabled' => Settings::get('WE_character_current_locations'),
+            'char_setting' => Settings::get('WE_character_current_locations'),
             'char_faction_enabled' => Settings::get('WE_character_factions')
         ]);
     }

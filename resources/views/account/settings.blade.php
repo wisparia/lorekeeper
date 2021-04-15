@@ -71,7 +71,7 @@
             <div class="form-group row">
                 <label class="col-md-2 col-form-label">Location</label>
                 <div class="col-md-9">
-                {!! Form::select('location', [0=>'Choose a Location'] + $locations, isset(Auth::user()->currentLocation_id) ? Auth::user()->currentLocation_id : 0, ['class' => 'form-control selectize']) !!}
+                {!! Form::select('location', [0=>'Choose a Location'] + $locations, isset(Auth::user()->current_location_id) ? Auth::user()->current_location_id : 0, ['class' => 'form-control selectize']) !!}
                 </div>
                 <div class="col-md text-right">
                     {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}

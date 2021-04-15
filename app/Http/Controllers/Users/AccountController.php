@@ -65,6 +65,7 @@ class AccountController extends Controller
             'user_enabled' => Settings::get('WE_user_locations'),
             'user_faction_enabled' => Settings::get('WE_user_locations'),
             'char_enabled' => Settings::get('WE_character_locations'),
+            'char_setting' => Settings::get('WE_character_locations'),
             'char_faction_enabled' => Settings::get('WE_character_locations'),
             'location_interval' => $interval[Settings::get('WE_change_timelimit')]
         ]);
