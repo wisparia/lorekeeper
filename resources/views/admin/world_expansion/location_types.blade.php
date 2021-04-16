@@ -5,22 +5,25 @@
 @section('admin-content')
 {!! breadcrumbs(['Admin Panel' => 'admin', 'Location types' => 'admin/world/location-types']) !!}
 
+<div class="float-right mb-3">
+    <a class="btn btn-primary" href="{{ url('admin/world/location-types/create') }}"><i class="fas fa-plus mr-2"></i> Create New Location Type</a>
+    <a class="btn btn-secondary" href="{{ url('admin/world/locations') }}"><i class="fas fa-undo-alt mr-2"></i> Back to Locations</a>
+</div>
 <h1>Location types</h1>
 
-<p class="mb-0">Location types are effectively categories for locations - but mostly for organization and display. <strong>eg. Country, Continent, Island.</strong></p>
+<p class="mb-0" style="clear:both">Location types are effectively categories for locations - but mostly for organization and display. <strong>eg. Country, Continent, Island.</strong></p>
 <p>The sorting order reflects the order in which the types will be listed on the location type index.</p>
 
-<div class="text-right mb-3"><a class="btn btn-primary" href="{{ url('admin/world/location-types/create') }}"><i class="fas fa-plus"></i> Create New Location Type</a></div>
 @if(!count($types))
     <p>No location types found.</p>
-@else 
+@else
     <table class="table table-sm type-table">
         <tbody id="sortable" class="sortable">
             @foreach($types as $type)
                 <tr class="sort-item" data-id="{{ $type->id }}">
                     <td>
                         <a class="fas fa-arrows-alt-v handle mr-3" href="#"></a>
-                        <a href={!! $type->url !!} @if($type->thumb_extension) data-toggle="tooltip" title="<img src='{{$type->thumbUrl}}' style='max-width:100px;'/><br> {{ucfirst($type->name)}} " @endif />{!! $type->name !!}</a> 
+                        <a href={!! $type->url !!} @if($type->thumb_extension) data-toggle="tooltip" title="<img src='{{$type->thumbUrl}}' style='max-width:100px;'/><br> {{ucfirst($type->name)}} " @endif />{!! $type->name !!}</a>
                         ({!! $type->names !!})
                     </td>
                     <td class="text-right">

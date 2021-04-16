@@ -18,7 +18,7 @@ class LocationController extends Controller
 
 
     /**********************************************************************************************
-    
+
         LOCATION TYPES
 
     **********************************************************************************************/
@@ -34,7 +34,7 @@ class LocationController extends Controller
             'types' => LocationType::orderBy('sort', 'DESC')->get()
         ]);
     }
-    
+
     /**
      * Shows the create location type page.
      *
@@ -46,7 +46,7 @@ class LocationController extends Controller
             'type' => new LocationType
         ]);
     }
-    
+
     /**
      * Shows the edit location type page.
      *
@@ -146,7 +146,7 @@ class LocationController extends Controller
 
 
     /**********************************************************************************************
-    
+
         LOCATIONS
 
     **********************************************************************************************/
@@ -159,10 +159,11 @@ class LocationController extends Controller
     public function getLocationIndex()
     {
         return view('admin.world_expansion.locations', [
-            'locations' => Location::orderBy('sort', 'DESC')->get()
+            'locations' => Location::orderBy('sort', 'DESC')->get(),
+            'types' => LocationType::orderBy('sort', 'DESC')->get()
         ]);
     }
-    
+
     /**
      * Shows the create location location page.
      *
@@ -170,15 +171,22 @@ class LocationController extends Controller
      */
     public function getCreateLocation()
     {
+        $types = LocationType::all()->pluck('name','id')->toArray();
+
+        if(!count($types)) {
+            flash('You need to create a faction type before you can create a faction.')->error();
+            return redirect()->to('admin/world/faction-types/');
+        }
+
         return view('admin.world_expansion.create_edit_location', [
             'location' => new Location,
-            'types' => LocationType::all()->pluck('name','id')->toArray(),
+            'types' => $types,
             'locations' => Location::all()->pluck('name','id')->toArray(),
             'ch_enabled' => Settings::get('WE_character_locations'),
             'user_enabled' => Settings::get('WE_user_locations')
         ]);
     }
-    
+
     /**
      * Shows the edit location location page.
      *
@@ -211,7 +219,7 @@ class LocationController extends Controller
         $id ? $request->validate(Location::$updateRules) : $request->validate(Location::$createRules);
 
         $data = $request->only([
-            'name', 'description', 'image', 'image_th', 'remove_image', 'remove_image_th', 'is_active', 'summary', 
+            'name', 'description', 'image', 'image_th', 'remove_image', 'remove_image_th', 'is_active', 'summary',
             'parent_id', 'type_id', 'user_home', 'character_home', 'style'
         ]);
         if($id && $service->updateLocation(Location::find($id), $data, Auth::user())) {
@@ -305,5 +313,5 @@ class LocationController extends Controller
 
 
 
-    
+
 }
