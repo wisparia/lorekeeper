@@ -47,7 +47,7 @@
                         <div class="col-lg-8 col-md-6 col-8">{!! $image->character->location ? $image->character->location : 'None' !!}</div>
                     </div>
                 @endif
-                @if($image->character->current_location_id)
+                @if($image->character->currentSetting)
                     <div class="row">
                         <div class="col-lg-4 col-md-6 col-4"><h5>Current Location</h5></div>
                         <div class="col-lg-8 col-md-6 col-8">{!! $image->character->current->displayName ? $image->character->current->displayName : 'None' !!}</div>

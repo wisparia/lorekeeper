@@ -51,9 +51,6 @@
     @if($ch_enabled)
         {!! Form::checkbox('character_home', 1, $location->id ? $location->is_character_home : 0, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'data-on' => 'Characters Can Live Here', 'data-off' => 'Characters Cannot Live Here']) !!}
     @endif
-    @if($ch_enabled)
-        {!! Form::checkbox('character_current', 1, $location->id ? $location->is_character_current : 0, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'data-on' => 'Characters Can Live Here', 'data-off' => 'Characters Cannot Live Here']) !!}
-    @endif
     </div>
 @endif
 
