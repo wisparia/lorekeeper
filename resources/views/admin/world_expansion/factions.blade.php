@@ -5,15 +5,22 @@
 @section('admin-content')
 {!! breadcrumbs(['Admin Panel' => 'admin', 'Factions' => 'admin/world/factions']) !!}
 
+
+<div class="float-right mb-3">
+    <a class="btn btn-primary" href="{{ url('admin/world/faction-types') }}"><i class="fas fa-folder mr-2"></i> Faction Types</a>
+    @if(count($types))
+        <a class="btn btn-primary" href="{{ url('admin/world/factions/create') }}"><i class="fas fa-plus mr-2"></i> Create New Faction</a>
+    @endif
+</div>
 <h1>Factions</h1>
 
-<p class="mb-0">Factions are specific organizations within your world.</p>
+<p class="mb-0" style="clear:both;">Factions are specific organizations within your world.</p>
 <p>The sorting order reflects the order in which the factions will be listed on the faction index.</p>
 
-<div class="text-right mb-3">
-    <a class="btn btn-primary" href="{{ url('admin/world/faction-types') }}"><i class="fas fa-folder mr-2"></i> Faction Types</a>
-    <a class="btn btn-primary" href="{{ url('admin/world/factions/create') }}"><i class="fas fa-plus mr-2"></i> Create New Faction</a>
-</div>
+
+@if(!count($types))
+    <div class="alert alert-warning">You will need to create a faction type before you can create any factions, as type is required.</div>
+@endif
 @if(!count($factions))
     <p>No factions found.</p>
 @else

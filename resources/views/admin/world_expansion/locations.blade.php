@@ -5,18 +5,25 @@
 @section('admin-content')
 {!! breadcrumbs(['Admin Panel' => 'admin', 'Locations' => 'admin/world/locations']) !!}
 
+<div class="float-right mb-3">
+    <a class="btn btn-primary" href="{{ url('admin/world/location-types') }}"><i class="fas fa-folder mr-2"></i> Location Types</a>
+    @if(count($types))
+        <a class="btn btn-primary" href="{{ url('admin/world/locations/create') }}"><i class="fas fa-plus mr-2"></i> Create New Location</a>
+    @endif
+</div>
 <h1>Locations</h1>
 
-<p class="mb-0">Locations are specific areas of your world. <strong>eg. Canada, Europe, Las Vegas.</strong></p>
+<p class="mb-0" style="clear:both;">Locations are specific areas of your world. <strong>eg. Canada, Europe, Las Vegas.</strong></p>
 <p>The sorting order reflects the order in which the locations will be listed on the location index.</p>
 
-<div class="text-right mb-3">
-    <a class="btn btn-primary" href="{{ url('admin/world/location-types') }}"><i class="fas fa-folder mr-2"></i> Location Types</a>
-    <a class="btn btn-primary" href="{{ url('admin/world/locations/create') }}"><i class="fas fa-plus mr-2"></i> Create New Location</a>
-</div> 
+
+@if(!count($types))
+    <div class="alert alert-warning">You will need to create a location type before you can create any locations, as type is required.</div>
+@endif
+
 @if(!count($locations))
     <p>No locations found.</p>
-@else 
+@else
     <table class="table table-sm type-table">
         <tbody id="sortable" class="sortable">
             @foreach($locations as $location)

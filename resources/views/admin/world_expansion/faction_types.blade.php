@@ -5,12 +5,15 @@
 @section('admin-content')
 {!! breadcrumbs(['Admin Panel' => 'admin', 'Faction types' => 'admin/world/faction-types']) !!}
 
+<div class="float-right mb-3">
+    <a class="btn btn-primary" href="{{ url('admin/world/faction-types/create') }}"><i class="fas fa-plus mr-2"></i> Create New Faction Type</a>
+    <a class="btn btn-secondary" href="{{ url('admin/world/factions') }}"><i class="fas fa-undo-alt mr-2"></i> Back to Factions</a>
+</div>
 <h1>Faction types</h1>
 
-<p class="mb-0">Faction types are effectively categories for factions - but mostly for organization and display.</p>
+<p class="mb-0" style="clear:both">Faction types are effectively categories for factions - but mostly for organization and display.</p>
 <p>The sorting order reflects the order in which the types will be listed on the faction type index.</p>
 
-<div class="text-right mb-3"><a class="btn btn-primary" href="{{ url('admin/world/faction-types/create') }}"><i class="fas fa-plus"></i> Create New Faction Type</a></div>
 @if(!count($types))
     <p>No faction types found.</p>
 @else

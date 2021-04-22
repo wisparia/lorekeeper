@@ -7,7 +7,7 @@
 
 <h1>Concept</h1>
 
-<p class="mb-0">Concept are the animals of your world. </p>
+<p class="mb-0">From artistic concepts to planned storylines, concepts can be whatever you want! </p>
 
 <div class="text-right mb-3">
     <a class="btn btn-primary" href="{{ url('admin/world/concept-categories') }}"><i class="fas fa-folder mr-2"></i> Concept Categories</a>

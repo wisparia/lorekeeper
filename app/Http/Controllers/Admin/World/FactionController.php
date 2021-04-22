@@ -157,7 +157,8 @@ class FactionController extends Controller
     public function getFactionIndex()
     {
         return view('admin.world_expansion.factions', [
-            'factions' => Faction::orderBy('sort', 'DESC')->get()
+            'factions' => Faction::orderBy('sort', 'DESC')->get(),
+            'types' => FactionType::orderBy('sort', 'DESC')->get()
         ]);
     }
 
@@ -168,9 +169,16 @@ class FactionController extends Controller
      */
     public function getCreateFaction()
     {
+        $types = FactionType::all()->pluck('name','id')->toArray();
+
+        if(!count($types)) {
+            flash('You need to create a faction type before you can create a faction.')->error();
+            return redirect()->to('admin/world/faction-types/');
+        }
+
         return view('admin.world_expansion.create_edit_faction', [
             'faction' => new Faction,
-            'types' => FactionType::all()->pluck('name','id')->toArray(),
+            'types' => $types,
             'factions' => Faction::all()->pluck('name','id')->toArray(),
             'locations' => Location::all()->pluck('name','id')->toArray(),
             'figures' => Figure::all()->pluck('name','id')->toArray(),

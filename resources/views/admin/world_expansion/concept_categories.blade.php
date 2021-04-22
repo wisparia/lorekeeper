@@ -5,9 +5,14 @@
 @section('admin-content')
 {!! breadcrumbs(['Admin Panel' => 'admin', 'Concept Categories' => 'admin/world/concept-categories']) !!}
 
+<div class="float-right mb-3">
+    <a class="btn btn-primary" href="{{ url('admin/world/concept-categories/create') }}"><i class="fas fa-plus mr-2"></i> Create New Concept Category</a>
+    <a class="btn btn-secondary" href="{{ url('admin/world/concepts') }}"><i class="fas fa-undo-alt mr-2"></i> Back to Concepts</a>
+</div>
 <h1>Concept Categories</h1>
 
-<div class="text-right mb-3"><a class="btn btn-primary" href="{{ url('admin/world/concept-categories/create') }}"><i class="fas fa-plus"></i> Create New Concept Category</a></div>
+<p style="clear:both">Concept categories are not required but may help in differentiating concept types.</p>
+
 @if(!count($categories))
     <p>No concept categories found.</p>
 @else

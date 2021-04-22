@@ -1,6 +1,6 @@
 <?php
 return [
-    
+
     // FORMAT EXAMPLE.
     //
     // 'extension_tracker' => [
@@ -11,7 +11,7 @@ return [
     //     ]),
     //     'version' => '1.0.0',
     // ],
-    
+
     'world_expansion' => [
         'key' => 'world_expansion',
          'wiki_key' => 'World_Expansion',
@@ -19,8 +19,8 @@ return [
              'Uri' => 'https://github.com/preimpression/',
              'Mercury' => 'https://github.com/itinerare/',
          ]),
-         'version' => '1.2.0',
+         'version' => '1.2.1',
     ],
-    
+
 
 ];
