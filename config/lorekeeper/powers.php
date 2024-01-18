@@ -50,6 +50,10 @@ return [
     'manage_reports' => [
         'name' => 'Manage Reports',
         'description' => 'Allow rank to view the reports queue.'
+    ],
+    'manage_helptickets' => [
+        'name' => 'Manage Help Tickets',
+        'description' => 'Allow rank to view the help tickets queue.'
     ]
 
 

@@ -430,6 +430,14 @@ Route::group(['prefix' => 'reports', 'middleware' => 'power:manage_reports'], fu
     Route::post('edit/{id}/{action}', 'ReportController@postReport')->where('action', 'assign|close');
 });
 
+# HelpTickets
+Route::group(['prefix' => 'helptickets', 'middleware' => 'power:manage_helptickets'], function() {
+    Route::get('/', 'HelpTicketController@getHelpTicketIndex');
+    Route::get('/{status}', 'HelpTicketController@getHelpTicketIndex')->where('status', 'pending|assigned|assigned-to-me|closed');
+    Route::get('edit/{id}', 'HelpTicketController@getHelpTicket');
+    Route::post('edit/{id}/{action}', 'HelpTicketController@postHelpTicket')->where('action', 'assign|close');
+});
+
 # DESIGN APPROVALS
 Route::group(['prefix' => 'designs', 'middleware' => 'power:manage_characters'], function() {
     Route::get('edit/{id}/{action}', 'DesignController@getDesignConfirmation')->where('action', 'cancel|approve|reject');

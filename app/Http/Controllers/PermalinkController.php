@@ -13,6 +13,7 @@ use App\Models\Model;
 
 use App\Models\Comment;
 use App\Models\Report\Report;
+use App\Models\HelpTicket\HelpTicket;
 
 class PermalinkController extends Controller
 {
@@ -46,6 +47,12 @@ class PermalinkController extends Controller
                         $report = Report::where('id', $comment->commentable_id)->first();
                         $isMod = Auth::user()->hasPower('manage_reports');
                         $isOwner = ($report->user_id == Auth::user()->id);
+                        if(!$isMod && !$isOwner) abort(404);
+                        break;
+                    case 'App\Models\HelpTicket\HelpTicket':
+                        $helpTicket = HelpTicket::where('id', $comment->commentable_id)->first();
+                        $isMod = Auth::user()->hasPower('manage_helptickets');
+                        $isOwner = ($helpTicket->user_id == Auth::user()->id);
                         if(!$isMod && !$isOwner) abort(404);
                         break;
                     default:

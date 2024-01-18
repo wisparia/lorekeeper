@@ -159,4 +159,6 @@ class Notification extends Model
     const GALLERY_SUBMISSION_STAFF_COMMENTS = 513;
     const GALLERY_SUBMISSION_EDITED         = 514;
     const GALLERY_SUBMISSION_PARTICIPANT    = 515;
+    const HELP_TICKET_ASSIGNED              =1100;
+    const HELP_TICKET_CLOSED                =1101;
 }

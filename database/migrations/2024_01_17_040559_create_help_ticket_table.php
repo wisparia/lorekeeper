@@ -1,10 +1,10 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-class AddUserReports extends Migration
+class CreateHelpTicketTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,8 +12,8 @@ class AddUserReports extends Migration
      * @return void
      */
     public function up()
-    { 
-        Schema::create('reports', function (Blueprint $table) {
+    {
+        Schema::create('help_ticket', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
 
@@ -25,7 +25,7 @@ class AddUserReports extends Migration
             $table->text('staff_comments')->nullable()->default(null);
             $table->text('parsed_staff_comments')->nullable()->default(null);
 
-            $table->boolean('is_br')->default(0);
+            $table->boolean('is_urgent')->default(0);
             $table->string('error_type')->nullable();
 
             $table->string('data', 512)->nullable()->default(null);
@@ -43,6 +43,6 @@ class AddUserReports extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('reports');
+        Schema::dropIfExists('help_ticket');
     }
 }

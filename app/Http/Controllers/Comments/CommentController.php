@@ -18,6 +18,7 @@ use App\Models\Sales\Sales;
 use App\Models\User\User;
 use App\Models\News;
 use App\Models\Gallery\GallerySubmission;
+use App\Models\HelpTicket\HelpTicket;
 use App\Models\Report\Report;
 use App\Models\SitePage;
 
@@ -113,6 +114,14 @@ class CommentController extends Controller implements CommentControllerInterface
                 $post = 'your report'; // Simple message to show if it's profile/sales/news
                 $link = 'reports/view/' . $report->id . '/#comment-' . $comment->getKey();
                 if($recipients == $sender) $recipient = (isset($report->staff_id) ? $report->staff : User::find(Settings::get('admin_user')));
+                else  $recipient = $recipients;
+                break;
+            case 'App\Models\HelpTicket\HelpTicket':
+                $helpTicket = HelpTicket::find($comment->commentable_id);
+                $recipients = $helpTicket->user; // User that has been commented on (or owner of sale post)
+                $post = 'your help ticket'; // Simple message to show if it's profile/sales/news
+                $link = 'helptickets/view/' . $helpTicket->id . '/#comment-' . $comment->getKey();
+                if($recipients == $sender) $recipient = (isset($helpTicket->staff_id) ? $helpTicket->staff : User::find(Settings::get('admin_user')));
                 else  $recipient = $recipients;
                 break;
             case 'App\Models\SitePage':

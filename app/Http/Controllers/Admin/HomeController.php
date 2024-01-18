@@ -13,6 +13,7 @@ use App\Models\Character\CharacterDesignUpdate;
 use App\Models\Character\CharacterTransfer;
 use App\Models\Trade;
 use App\Models\Report\Report;
+use App\Models\HelpTicket\HelpTicket;
 
 use App\Http\Controllers\Controller;
 
@@ -35,6 +36,8 @@ class HomeController extends Controller
             'myoCount' => CharacterDesignUpdate::myos()->where('status', 'Pending')->count(),
             'reportCount' => Report::where('status', 'Pending')->count(),
             'assignedReportCount' => Report::assignedToMe(Auth::user())->count(),
+            'helpTicketCount' => HelpTicket::where('status', 'Pending')->count(),
+            'assignedHelpTicketCount' => HelpTicket::assignedToMe(Auth::user())->count(),
             'openTransfersQueue' => $openTransfersQueue,
             'transferCount' => $openTransfersQueue ? CharacterTransfer::active()->where('is_approved', 0)->count() : 0,
             'tradeCount' => $openTransfersQueue ? Trade::where('status', 'Pending')->count() : 0,

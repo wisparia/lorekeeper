@@ -80,6 +80,8 @@ class AddSiteSettings extends Command
         $this->addSiteSetting('is_claims_open', 1, '0: New claims cannot be made (mods can work on the queue still), 1: Claims are submittable.');
 
         $this->addSiteSetting('is_reports_open', 1, '0: New reports cannot be made (mods can work on the queue still), 1: Reports are submittable.');
+        
+        $this->addSiteSetting('is_helptickets_open', 1, '0: New help tickets cannot be made (mods can work on the queue still), 1: Help Tickets are submittable.');
 
         $this->addSiteSetting('is_myos_open', 1, '0: MYO slots cannot be submitted for design approval, 1: MYO slots can be submitted for approval.');
 

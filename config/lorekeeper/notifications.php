@@ -407,4 +407,18 @@ return [
         'message' => '<a href="{sender_url}">{sender}</a> has added you as a participant on a gallery submission. (<a href="{url}">View Submission</a>)',
         'url' => 'gallery/view/{submission_id}'
     ],
+    
+    // REPORT_ASSIGNED
+    1100 => [
+        'name' => 'Help Ticket Assigned',
+        'message' => 'Your help ticket (#{helpticket_id}) was assigned to <a href="{staff_url}">{staff_name}</a>, you can expect a response soon. (<a href="{url}">View Help Ticket</a>)',
+        'url' => 'helptickets/view/{helpticket_id}'
+    ],
+    
+    // REPORT_CLOSED
+    1101 => [
+        'name' => 'Help Ticket Closed',
+        'message' => 'Your report (#{report_id}) was closed by <a href="{staff_url}">{staff_name}</a>. (<a href="{url}">View Help Ticket</a>)',
+        'url' => 'helptickets/view/{helpticket_id}'
+    ],
 ];
