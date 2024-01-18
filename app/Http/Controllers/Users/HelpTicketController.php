@@ -108,7 +108,7 @@ class HelpTicketController extends Controller
         $request['url'] = strip_tags($request['url']);
 
         if($service->createHelpTicket($request->only(['url', 'comments', 'is_br', 'ticket_type', 'error']), Auth::user(), true)) {
-            flash('helpticket submitted successfully.')->success();
+            flash('Help ticket submitted successfully.')->success();
         }
         else {
             foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();

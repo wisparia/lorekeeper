@@ -7,9 +7,9 @@
 
 @if($helpTicket->status !== 'Closed')
     @if($helpTicket->status == 'Assigned' && Auth::user()->id !== $helpTicket->staff_id)
-    <div class="alert alert-danger">This helpticket is not assigned to you</div>
+    <div class="alert alert-danger">This help ticket is not assigned to you</div>
     @elseif($helpTicket->status == 'Pending')
-    <div class="alert alert-warning">This helpticket needs assigning</div>
+    <div class="alert alert-warning">This help ticket needs assigning</div>
     @endif
     <h1>
         Help Ticket (#{{ $helpTicket->id }})
@@ -59,7 +59,7 @@
 
     {!! Form::open(['url' => url()->current(), 'id' => 'helpticketForm']) !!}
     @if($helpTicket->status == 'Assigned' && Auth::user()->id == $helpTicket->staff_id)
-    @if(Auth::user()->hasPower('manage_helptickets'))<div class="alert alert-warning">Please include a small paragraph on the solution and as many important details as you deem necessary, as the user will no longer be able to view the comments after the helpticket is closed</div>@endif
+    @if(Auth::user()->hasPower('manage_helptickets'))<div class="alert alert-warning">Please include a small paragraph on the solution and as many important details as you deem necessary, as the user will no longer be able to view the comments after the help ticket is closed</div>@endif
 		<div class="form-group">
             {!! Form::label('staff_comments', 'Staff Comments (Optional)') !!}
 			{!! Form::textarea('staff_comments', $helpTicket->staffComments, ['class' => 'form-control wysiwyg']) !!}
@@ -83,7 +83,7 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <p>This will close the helpticket.</p>
+                    <p>This will close the help ticket.</p>
                     <div class="text-right">
                         <a href="#" id="closalSubmit" class="btn btn-success">Close</a>
                     </div>
@@ -95,7 +95,7 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <p class="text-left">This will assign yourself to the helpticket.</p>
+                    <p class="text-left">This will assign yourself to the help ticket.</p>
                     <div class="text-right">
                         <a href="#" id="assignSubmit" class="btn btn-danger">Assign</a>
                     </div>
@@ -104,7 +104,7 @@
         </div>
     </div>
 @else
-    <div class="alert alert-danger">This helpticket has already been closed.</div>
+    <div class="alert alert-danger">This help ticket has already been closed.</div>
     @include('home._help_ticket_content', ['helpTicket' => $helpTicket])
 @endif
 

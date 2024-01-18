@@ -63,10 +63,10 @@ class HelpTicketController extends Controller
     {
         $data = $request->only(['staff_comments']);
         if($action == 'assign' && $service->assignHelpTicket($request->only(['staff_comments']) + ['id' => $id], Auth::user())) {
-            flash('helpticket assigned successfully.')->success();
+            flash('Help ticket assigned successfully.')->success();
         }
         elseif($action == 'close' && $service->closeHelpTicket($data + ['id' => $id], Auth::user())) {
-            flash('helpticket closed successfully.')->success();
+            flash('Help ticket closed successfully.')->success();
         }
         else {
             foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
