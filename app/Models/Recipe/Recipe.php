@@ -1,11 +1,16 @@
 <?php
 
 namespace App\Models\Recipe;
-use App\Models\RecipeCategory;
 
 use Config;
 use DB;
 use App\Models\Model;
+use App\Models\Recipe\RecipeCategory;
+
+use App\Models\User\User;
+use App\Models\Shop\Shop;
+use App\Models\Prompt\Prompt;
+use App\Models\User\UserItem;
 
 class Recipe extends Model
 {
